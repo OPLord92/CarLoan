@@ -280,6 +280,19 @@
 <div class="toast" id="toast"></div>
 
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCMmGXhYMxtUpAPCJH0pfvlmCDyxvDYnqE",
+  authDomain: "oplord-35fc0.firebaseapp.com",
+  projectId: "oplord-35fc0",
+  storageBucket: "oplord-35fc0.firebasestorage.app",
+  messagingSenderId: "558480615816",
+  appId: "1:558480615816:web:e3283f7fdc1adce8e6b23d",
+  measurementId: "G-HPJ1G0BGGT"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
 let state = { plate: "", totalLoan: 0, payments: [] };
 
 const $ = (id) => document.getElementById(id);
