@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>车贷管家</title>
 <style>
   :root{
@@ -73,7 +74,7 @@
   }
   .titlebar{
     display:flex; align-items:center; gap:10px;
-    padding: 14px 20px;
+    padding: calc(14px + env(safe-area-inset-top)) 20px 14px;
     border-bottom: 1px solid var(--border);
     background: var(--surface-strong);
     flex-shrink:0;
@@ -119,7 +120,7 @@
   .auth-screen{
     position: fixed; inset: 0;
     display:flex; align-items:center; justify-content:center;
-    padding: 24px;
+    padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
   }
   .auth-card{
     width: 100%; max-width: 340px;
@@ -163,29 +164,41 @@
     content:""; flex:1; height:1px; background: var(--border);
   }
   .auth-divider span{ padding: 0 10px; }
+  .auth-options{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    margin-top:10px; font-size:12.5px;
+  }
+  .keep-signed-in{ display:flex; align-items:center; gap:7px; color:var(--text-secondary); user-select:none; }
+  .keep-signed-in input{ width:15px; height:15px; margin:0; cursor:pointer; accent-color:#0067C0; }
+  .forgot-password{ color:#0067C0; text-decoration:none; font-weight:600; cursor:pointer; white-space:nowrap; }
+  .forgot-password:hover{ text-decoration:underline; }
+  body.dark .forgot-password{ color:#60a5fa; }
+  .password-wrap{ position:relative; }
+  .password-wrap input{ padding-right:44px; }
+  .password-eye{
+    position:absolute; right:5px; top:50%; transform:translateY(-50%);
+    width:34px; height:32px; padding:0; border:0; background:transparent;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--text-secondary); cursor:pointer; border-radius:5px;
+  }
+  .password-eye:hover{ background:var(--ghost-hover); }
+  .password-eye:active{ transform:translateY(-50%); }
+  .password-eye, .password-eye svg{ transition:none !important; animation:none !important; }
+  .password-eye svg{ width:20px; height:20px; pointer-events:none; }
+  .language-toggle{
+    min-width:48px; height:30px; padding:0 9px; border-radius:7px;
+    border:1px solid var(--border); background:var(--ghost-bg); color:var(--text-primary);
+    font-size:12px; font-weight:700; cursor:pointer;
+  }
+  .language-toggle:hover{ background:var(--ghost-hover); }
+  .auth-language-row{ display:flex; justify-content:flex-end; margin:-10px -6px 8px 0; }
   .auth-error{
     margin-top: 14px; font-size:12.5px; color: var(--danger);
     min-height: 1px;
+    white-space: pre-wrap; word-break: break-all;
   }
-  .auth-row{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-top: 4px;
-  }
-  .auth-checkbox{
-    display:flex; align-items:center; gap:7px;
-    font-size: 12.5px; color: var(--text-secondary);
-    cursor: pointer; user-select:none;
-  }
-  .auth-checkbox input{
-    width:15px; height:15px; margin:0; accent-color: var(--accent); cursor:pointer;
-  }
-  .auth-link{
-    font-size: 12.5px; color: var(--accent);
-    text-decoration:none;
-  }
-  .auth-link:hover{ text-decoration: underline; }
 
-  .content{ padding: 22px 24px 28px; overflow-y:auto; flex:1; }
+  .content{ padding: 22px 24px calc(28px + env(safe-area-inset-bottom)); overflow-y:auto; flex:1; -webkit-overflow-scrolling: touch; }
 
   .card{
     background: var(--card);
@@ -358,39 +371,46 @@
 
 <div class="auth-screen" id="authScreen">
   <div class="auth-card">
+    <div class="auth-language-row"><button class="language-toggle" id="authLanguageBtn" type="button">EN</button></div>
     <div class="auth-logo">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 16h16M4 16l1.5-5.5A2 2 0 0 1 7.4 9h9.2a2 2 0 0 1 1.9 1.5L20 16M4 16v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h10v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16.2" r="1.3" fill="white"/><circle cx="16.5" cy="16.2" r="1.3" fill="white"/></svg>
     </div>
-    <h1 class="auth-title">车贷管家</h1>
-    <p class="auth-sub">登录后，手机和电脑的数据会自动同步</p>
+    <h1 class="auth-title" data-i18n="appTitle">车贷管家</h1>
+    <p class="auth-sub" data-i18n="authSub">登录后，手机和电脑的数据会自动同步</p>
 
     <button class="btn-google" id="googleSignInBtn">
       <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-      使用 Google 登录
+      <span data-i18n="googleLogin">使用 Google 登录</span>
     </button>
 
-    <div class="auth-divider"><span>或</span></div>
+    <div class="auth-divider"><span data-i18n="or">或</span></div>
 
     <div class="field">
-      <label for="authEmail">邮箱</label>
+      <label for="authEmail" data-i18n="email">邮箱</label>
       <input id="authEmail" type="email" placeholder="">
     </div>
     <div class="field">
-      <label for="authPassword">密码</label>
-      <input id="authPassword" type="password" placeholder="">
+      <label for="authPassword" data-i18n="password">密码</label>
+      <div class="password-wrap">
+        <input id="authPassword" type="password" placeholder="">
+        <button class="password-eye" id="passwordEyeBtn" type="button" aria-label="Show password" title="Show password">
+          <svg id="eyeNormal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="eyeSlash" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>
+        </button>
+      </div>
     </div>
 
-    <div class="auth-row">
-      <label class="auth-checkbox">
-        <input type="checkbox" id="keepSignedIn" checked>
-        <span>记住我的登录状态</span>
+    <div class="auth-options">
+      <label class="keep-signed-in" for="keepSignedIn">
+        <input id="keepSignedIn" type="checkbox">
+        <span data-i18n="keepSigned">Keep Me Signed In</span>
       </label>
-      <a href="#" id="forgotPasswordLink" class="auth-link">忘记密码？</a>
+      <a class="forgot-password" id="forgotPasswordLink" href="#" data-i18n="forgotPassword">Forgot Password?</a>
     </div>
 
     <div class="actions" style="margin-top:14px;">
-      <button class="btn-accent" id="emailLoginBtn" style="flex:1;">登录</button>
-      <button class="btn-ghost" id="emailRegisterBtn" style="flex:1;">注册新账号</button>
+      <button class="btn-accent" id="emailLoginBtn" style="flex:1;" data-i18n="login">登录</button>
+      <button class="btn-ghost" id="emailRegisterBtn" style="flex:1;" data-i18n="register">注册新账号</button>
     </div>
 
     <div id="authError" class="auth-error"></div>
@@ -402,8 +422,9 @@
     <div class="icon">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 16h16M4 16l1.5-5.5A2 2 0 0 1 7.4 9h9.2a2 2 0 0 1 1.9 1.5L20 16M4 16v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h10v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16.2" r="1.3" fill="white"/><circle cx="16.5" cy="16.2" r="1.3" fill="white"/></svg>
     </div>
-    <h1>车贷管家</h1>
+    <h1 data-i18n="appTitle">车贷管家</h1>
     <div class="plate-chip" id="plateChip">未设置车牌</div>
+    <button class="language-toggle" id="mainLanguageBtn" type="button">EN</button>
     <button class="theme-toggle" id="themeToggleBtn" title="切换暗色模式">
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -413,7 +434,7 @@
   <div class="content">
 
     <div class="card">
-      <h2>贷款总览</h2>
+      <h2 data-i18n="loanOverview">贷款总览</h2>
       <div class="overview-top">
         <div class="ring-wrap">
           <svg viewBox="0 0 112 112">
@@ -423,28 +444,28 @@
           </svg>
           <div class="ring-label">
             <div class="pct" id="pctText">0%</div>
-            <div class="pct-sub">已还清</div>
+            <div class="pct-sub" data-i18n="paidOffLabel">已还清</div>
           </div>
         </div>
         <div class="stats">
           <div class="stat">
-            <div class="k">贷款总额</div>
+            <div class="k" data-i18n="totalLoan">贷款总额</div>
             <div class="v" id="totalText">RM 0</div>
           </div>
           <div class="stat paid">
-            <div class="k">已还金额</div>
+            <div class="k" data-i18n="amountPaid">已还金额</div>
             <div class="v" id="paidText">RM 0</div>
           </div>
           <div class="stat remaining">
-            <div class="k">剩余欠款</div>
+            <div class="k" data-i18n="remainingBalance">剩余欠款</div>
             <div class="v" id="remainText">RM 0</div>
           </div>
           <div class="stat">
-            <div class="k">还款次数</div>
+            <div class="k" data-i18n="paymentCount">还款次数</div>
             <div class="v" id="countText">0</div>
           </div>
           <div class="stat payoff" style="grid-column: 1 / -1;">
-            <div class="k">按目前还款速度，预计还剩</div>
+            <div class="k" data-i18n="estimatedRemaining">按目前还款速度，预计还剩</div>
             <div class="v" id="payoffText">--</div>
           </div>
         </div>
@@ -453,7 +474,7 @@
 
     <div class="card">
       <div class="settings-toggle" id="settingsToggle">
-        <h2 style="margin:0;">车辆与贷款设置</h2>
+        <h2 style="margin:0;" data-i18n="vehicleLoanSettings">车辆与贷款设置</h2>
         <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -461,24 +482,24 @@
       <div class="settings-body" id="settingsBody">
         <div class="row2">
           <div class="field">
-            <label for="plateInput">车牌号码</label>
-            <input id="plateInput" type="text" placeholder="例如 WXX 1234">
+            <label for="plateInput" data-i18n="plateNumber">车牌号码</label>
+            <input id="plateInput" type="text" placeholder="例如 WXX 1234" data-i18n-placeholder="plateExample">
           </div>
           <div class="field">
-            <label for="totalInput">车贷总额 (RM)</label>
-            <input id="totalInput" type="number" min="0" step="0.01" placeholder="例如 80000">
+            <label for="totalInput" data-i18n="totalLoanRM">车贷总额 (RM)</label>
+            <input id="totalInput" type="number" min="0" step="0.01" placeholder="例如 80000" data-i18n-placeholder="amountExample80k">
           </div>
         </div>
         <div class="actions">
-          <button class="btn-accent" id="saveSettingsBtn">保存设置</button>
-          <button class="btn-ghost" id="clearSettingsBtn">清除车牌信息</button>
+          <button class="btn-accent" id="saveSettingsBtn" data-i18n="saveSettings">保存设置</button>
+          <button class="btn-ghost" id="clearSettingsBtn" data-i18n="clearPlate">清除车牌信息</button>
         </div>
       </div>
     </div>
 
     <div class="card">
       <div class="settings-toggle" id="accountToggle">
-        <h2 style="margin:0;">账号</h2>
+        <h2 style="margin:0;" data-i18n="account">账号</h2>
         <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -486,37 +507,37 @@
       <div class="settings-body" id="accountBody">
         <div id="accountEmailText" class="info-box" style="margin-bottom:14px;">未登录</div>
         <div class="actions">
-          <button class="btn-ghost" id="logoutBtn">退出登录</button>
+          <button class="btn-ghost" id="logoutBtn" data-i18n="logout">退出登录</button>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2 id="payCardTitle">记录一笔还款</h2>
+      <h2 id="payCardTitle" data-i18n="recordPayment">记录一笔还款</h2>
       <div class="row2">
         <div class="field">
-          <label for="payAmount">还款金额 (RM)</label>
-          <input id="payAmount" type="number" min="0" step="0.01" placeholder="例如 1200">
+          <label for="payAmount" data-i18n="paymentAmount">还款金额 (RM)</label>
+          <input id="payAmount" type="number" min="0" step="0.01" placeholder="例如 1200" data-i18n-placeholder="amountExample1200">
         </div>
         <div class="field">
-          <label for="payDate">日期</label>
+          <label for="payDate" data-i18n="date">日期</label>
           <input id="payDate" type="date">
         </div>
       </div>
       <div class="field">
-        <label for="payNote">备注（可选）</label>
-        <input id="payNote" type="text" placeholder="例如 每月供款">
+        <label for="payNote" data-i18n="noteOptional">备注（可选）</label>
+        <input id="payNote" type="text" placeholder="例如 每月供款" data-i18n-placeholder="monthlyPaymentExample">
       </div>
       <div class="actions">
-        <button class="btn-accent" id="addPayBtn">添加还款记录</button>
-        <button class="btn-ghost" id="cancelEditBtn" style="display:none;">取消编辑</button>
+        <button class="btn-accent" id="addPayBtn" data-i18n="addPayment">添加还款记录</button>
+        <button class="btn-ghost" id="cancelEditBtn" style="display:none;" data-i18n="cancelEdit">取消编辑</button>
       </div>
     </div>
 
     <div class="card">
-      <h2>还款记录</h2>
+      <h2 data-i18n="paymentHistory">还款记录</h2>
       <div id="historyList">
-        <div class="empty-state">还没有还款记录，添加第一笔吧。</div>
+        <div class="empty-state" data-i18n="noPayments">还没有还款记录，添加第一笔吧。</div>
       </div>
     </div>
 
@@ -528,8 +549,8 @@
     <div class="modal-title" id="confirmTitle">确认操作</div>
     <div class="modal-message" id="confirmMessage"></div>
     <div class="modal-actions">
-      <button class="btn-ghost" id="confirmCancelBtn">取消</button>
-      <button class="btn-accent" id="confirmOkBtn">确认</button>
+      <button class="btn-ghost" id="confirmCancelBtn" data-i18n="cancel">取消</button>
+      <button class="btn-accent" id="confirmOkBtn" data-i18n="confirm">确认</button>
     </div>
   </div>
 </div>
@@ -560,6 +581,70 @@ let state = { plate: "", totalLoan: 0, payments: [], theme: null };
 
 const $ = (id) => document.getElementById(id);
 
+// ================== EN / CN Language ==================
+const LANGUAGE_KEY = "carLoanLanguage";
+let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "cn";
+const I18N = {
+  cn: {
+    appTitle:"车贷管家", authSub:"登录后，手机和电脑的数据会自动同步", googleLogin:"使用 Google 登录", or:"或", email:"邮箱", password:"密码",
+    keepSigned:"保持登录资料", forgotPassword:"忘记密码？", login:"登录", register:"注册新账号", loanOverview:"贷款总览", paidOffLabel:"已还清",
+    totalLoan:"贷款总额", amountPaid:"已还金额", remainingBalance:"剩余欠款", paymentCount:"还款次数", estimatedRemaining:"按目前还款速度，预计还剩",
+    vehicleLoanSettings:"车辆与贷款设置", plateNumber:"车牌号码", plateExample:"例如 WXX 1234", totalLoanRM:"车贷总额 (RM)", amountExample80k:"例如 80000",
+    saveSettings:"保存设置", clearPlate:"清除车牌信息", account:"账号", logout:"退出登录", recordPayment:"记录一笔还款", paymentAmount:"还款金额 (RM)",
+    amountExample1200:"例如 1200", date:"日期", noteOptional:"备注（可选）", monthlyPaymentExample:"例如 每月供款", addPayment:"添加还款记录", cancelEdit:"取消编辑",
+    paymentHistory:"还款记录", noPayments:"还没有还款记录，添加第一笔吧。", cancel:"取消", confirm:"确认", unsetPlate:"未设置车牌", loggedIn:"已登录", notLoggedIn:"未登录",
+    edit:"修改", delete:"删除", fullyPaid:"🎉 已还清", noPaymentYet:"还没有还款记录", insufficientRate:"还款速度不足以还清", year:"年", month:"个月",
+    avgMonthlyTitle:"按平均每月还 {amount} 计算", confirmAction:"确认操作", showPassword:"显示密码", hidePassword:"隐藏密码",
+    invalidEmail:"邮箱格式不对", userNotFound:"这个邮箱还没有注册", wrongPassword:"密码不对", invalidCredential:"邮箱或密码不对", emailInUse:"这个邮箱已经注册过了，直接登录就好",
+    weakPassword:"密码至少要 6 位", networkFailed:"网络连接失败，请检查网络", loginCancelled:"登录已取消", tooMany:"尝试次数太多，请稍后再试", missingEmail:"请输入邮箱", userDisabled:"这个账号已被停用",
+    loginFailed:"登录失败，请重试", enterEmailReset:"请先输入邮箱，然后再点击忘记密码？", resetSent:"密码重置邮件已发送到 {email}，请检查邮箱。", enterEmailPass:"请输入邮箱和密码",
+    noGoogleToken:"没有拿到 Google 登录令牌", logoutConfirm:"确定要退出登录吗？", logoutTitle:"退出登录", cloudFail:"云端同步失败 {hint}，请检查 Firestore 设置或网络", saveFail:"保存失败 {hint}，请检查 Firestore 设置或网络",
+    deleted:"已删除该记录", editPayment:"修改还款记录", saveChanges:"保存修改", enterPlate:"请输入车牌号码", invalidTotal:"请输入有效的贷款总额", settingsSaved:"设置已保存",
+    noSavedPlate:"目前没有已保存的车牌信息", clearConfirm:"确定要清除车牌号码和贷款总额吗？还款记录不会被删除。", clearPlateTitle:"清除车牌信息", plateCleared:"车牌信息已清除",
+    invalidPayment:"请输入有效的还款金额", futureDate:"日期不能选择未来的日子", paymentUpdated:"还款记录已更新", paymentAdded:"已添加还款记录"
+  },
+  en: {
+    appTitle:"Car Loan Manager", authSub:"Sign in to sync your data across your phone and computer", googleLogin:"Continue with Google", or:"OR", email:"Email", password:"Password",
+    keepSigned:"Keep Me Signed In", forgotPassword:"Forgot Password?", login:"Sign In", register:"Create Account", loanOverview:"Loan Overview", paidOffLabel:"Paid",
+    totalLoan:"Total Loan", amountPaid:"Amount Paid", remainingBalance:"Remaining Balance", paymentCount:"Payments", estimatedRemaining:"Estimated time remaining at current payment rate",
+    vehicleLoanSettings:"Vehicle & Loan Settings", plateNumber:"Plate Number", plateExample:"e.g. WXX 1234", totalLoanRM:"Total Loan (RM)", amountExample80k:"e.g. 80000",
+    saveSettings:"Save Settings", clearPlate:"Clear Vehicle Info", account:"Account", logout:"Sign Out", recordPayment:"Record a Payment", paymentAmount:"Payment Amount (RM)",
+    amountExample1200:"e.g. 1200", date:"Date", noteOptional:"Note (optional)", monthlyPaymentExample:"e.g. Monthly installment", addPayment:"Add Payment", cancelEdit:"Cancel Edit",
+    paymentHistory:"Payment History", noPayments:"No payment records yet. Add your first payment.", cancel:"Cancel", confirm:"Confirm", unsetPlate:"Plate not set", loggedIn:"Signed in", notLoggedIn:"Not signed in",
+    edit:"Edit", delete:"Delete", fullyPaid:"🎉 Fully paid", noPaymentYet:"No payment records yet", insufficientRate:"Payment rate is insufficient", year:"year", month:"month",
+    avgMonthlyTitle:"Based on an average monthly payment of {amount}", confirmAction:"Confirm Action", showPassword:"Show password", hidePassword:"Hide password",
+    invalidEmail:"Invalid email address", userNotFound:"No account is registered with this email", wrongPassword:"Incorrect password", invalidCredential:"Incorrect email or password", emailInUse:"This email is already registered. Please sign in.",
+    weakPassword:"Password must be at least 6 characters", networkFailed:"Network connection failed. Please check your connection.", loginCancelled:"Sign-in was cancelled", tooMany:"Too many attempts. Please try again later.", missingEmail:"Please enter your email", userDisabled:"This account has been disabled",
+    loginFailed:"Sign-in failed. Please try again.", enterEmailReset:"Enter your email first, then tap Forgot Password?", resetSent:"Password reset email sent to {email}. Please check your inbox.", enterEmailPass:"Please enter your email and password",
+    noGoogleToken:"Google sign-in token was not received", logoutConfirm:"Are you sure you want to sign out?", logoutTitle:"Sign Out", cloudFail:"Cloud sync failed {hint}. Check Firestore settings or your network.", saveFail:"Save failed {hint}. Check Firestore settings or your network.",
+    deleted:"Payment record deleted", editPayment:"Edit Payment", saveChanges:"Save Changes", enterPlate:"Please enter the plate number", invalidTotal:"Please enter a valid total loan amount", settingsSaved:"Settings saved",
+    noSavedPlate:"There is no saved vehicle information", clearConfirm:"Clear the plate number and total loan amount? Payment records will not be deleted.", clearPlateTitle:"Clear Vehicle Info", plateCleared:"Vehicle information cleared",
+    invalidPayment:"Please enter a valid payment amount", futureDate:"The date cannot be in the future", paymentUpdated:"Payment record updated", paymentAdded:"Payment record added"
+  }
+};
+function tr(key, vars={}){
+  let text = (I18N[currentLanguage] && I18N[currentLanguage][key]) || I18N.cn[key] || key;
+  Object.entries(vars).forEach(([k,v]) => { text = text.replaceAll(`{${k}}`, v); });
+  return text;
+}
+function applyLanguage(lang){
+  currentLanguage = lang === "en" ? "en" : "cn";
+  localStorage.setItem(LANGUAGE_KEY, currentLanguage);
+  document.documentElement.lang = currentLanguage === "en" ? "en" : "zh-CN";
+  document.title = tr("appTitle");
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-placeholder]").forEach(el => { el.placeholder = tr(el.dataset.i18nPlaceholder); });
+  const nextLabel = currentLanguage === "cn" ? "EN" : "CN";
+  $("authLanguageBtn").textContent = nextLabel;
+  $("mainLanguageBtn").textContent = nextLabel;
+  const visible = $("authPassword").type === "text";
+  $("passwordEyeBtn").setAttribute("aria-label", tr(visible ? "hidePassword" : "showPassword"));
+  $("passwordEyeBtn").title = tr(visible ? "hidePassword" : "showPassword");
+  applyTheme(state.theme || "light");
+  if(auth.currentUser) $("accountEmailText").textContent = auth.currentUser.email ? `${tr("loggedIn")}: ${auth.currentUser.email}` : tr("loggedIn");
+  render();
+}
+
 function fmt(n){
   return "RM " + Number(n||0).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
@@ -571,7 +656,7 @@ function todayStr(){
 
 function applyTheme(theme){
   document.body.classList.toggle("dark", theme === "dark");
-  $("themeToggleBtn").title = theme === "dark" ? "切换到亮色模式" : "切换到暗色模式";
+  $("themeToggleBtn").title = theme === "dark" ? (currentLanguage === "en" ? "Switch to light mode" : "切换到亮色模式") : (currentLanguage === "en" ? "Switch to dark mode" : "切换到暗色模式");
 }
 
 let unsubscribeSnapshot = null;
@@ -595,7 +680,7 @@ function startFirestoreSync(uid){
   }, (err) => {
     console.error("Firestore sync error:", err);
     const hint = err && err.code ? `（${err.code}）` : "";
-    showToast(`云端同步失败 ${hint}，请检查 Firestore 设置或网络`);
+    showToast(tr("cloudFail", {hint}));
   });
 }
 
@@ -617,7 +702,7 @@ async function saveState(){
   }catch(e){
     console.error("Firestore save error:", e);
     const hint = e && e.code ? `（${e.code}）` : "";
-    showToast(`保存失败 ${hint}，请检查 Firestore 设置或网络`);
+    showToast(tr("saveFail", {hint}));
   }
 }
 
@@ -628,36 +713,70 @@ function showAuthError(msg){
 
 function translateAuthError(err){
   const map = {
-    "auth/invalid-email": "邮箱格式不对",
-    "auth/user-not-found": "这个邮箱还没有注册",
-    "auth/wrong-password": "密码不对",
-    "auth/invalid-credential": "邮箱或密码不对",
-    "auth/email-already-in-use": "这个邮箱已经注册过了，直接登录就好",
-    "auth/weak-password": "密码至少要 6 位",
-    "auth/network-request-failed": "网络连接失败，请检查网络",
-    "auth/popup-closed-by-user": "登录已取消",
-    "auth/too-many-requests": "尝试次数太多，请稍后再试",
-    "auth/missing-email": "请先输入邮箱",
-    "auth/unauthorized-domain": "这个网址还没有在 Firebase 里加为「已获授权的网域」，去 Firebase 控制台 → Authentication → Settings → Authorized domains 里添加",
-    "auth/popup-blocked": "浏览器拦截了登录弹窗，请允许弹窗后重试"
+    "auth/invalid-email": "invalidEmail", "auth/user-not-found": "userNotFound", "auth/wrong-password": "wrongPassword",
+    "auth/invalid-credential": "invalidCredential", "auth/email-already-in-use": "emailInUse", "auth/weak-password": "weakPassword",
+    "auth/network-request-failed": "networkFailed", "auth/popup-closed-by-user": "loginCancelled", "auth/too-many-requests": "tooMany",
+    "auth/missing-email": "missingEmail", "auth/user-disabled": "userDisabled"
   };
-  return map[err.code] || (err.message || "登录失败，请重试");
+  return map[err.code] ? tr(map[err.code]) : (err.message || tr("loginFailed"));
 }
 
-async function applyChosenPersistence(){
-  const keep = $("keepSignedIn").checked;
-  await auth.setPersistence(
-    keep ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
-  );
+// Keep Me Signed In: remember only the email address, not the password or Firebase session.
+const REMEMBER_EMAIL_KEY = "carLoanRememberedEmail";
+const rememberedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
+if(rememberedEmail){
+  $("authEmail").value = rememberedEmail;
+  $("keepSignedIn").checked = true;
 }
+
+// Use in-memory auth persistence so reopening the Android app shows the login screen.
+// The remembered email is restored separately when Keep Me Signed In is checked.
+auth.setPersistence(firebase.auth.Auth.Persistence.NONE).catch((e) => {
+  console.warn("Could not set Firebase auth persistence:", e);
+});
+
+$("authLanguageBtn").addEventListener("click", () => applyLanguage(currentLanguage === "cn" ? "en" : "cn"));
+$("mainLanguageBtn").addEventListener("click", () => applyLanguage(currentLanguage === "cn" ? "en" : "cn"));
+
+$("passwordEyeBtn").addEventListener("click", () => {
+  const showing = $("authPassword").type === "text";
+  $("authPassword").type = showing ? "password" : "text";
+  $("eyeNormal").style.display = showing ? "block" : "none";
+  $("eyeSlash").style.display = showing ? "none" : "block";
+  $("passwordEyeBtn").setAttribute("aria-label", tr(showing ? "showPassword" : "hidePassword"));
+  $("passwordEyeBtn").title = tr(showing ? "showPassword" : "hidePassword");
+});
+
+applyLanguage(currentLanguage);
+
+$("forgotPasswordLink").addEventListener("click", async (e) => {
+  e.preventDefault();
+  showAuthError("");
+  const email = $("authEmail").value.trim();
+  if(!email){
+    showAuthError(tr("enterEmailReset"));
+    $("authEmail").focus();
+    return;
+  }
+  try{
+    await auth.sendPasswordResetEmail(email);
+    showAuthError(tr("resetSent", {email}));
+  }catch(err){
+    showAuthError(translateAuthError(err));
+  }
+});
 
 $("emailLoginBtn").addEventListener("click", async () => {
   showAuthError("");
   const email = $("authEmail").value.trim();
   const pass = $("authPassword").value;
-  if(!email || !pass){ showAuthError("请输入邮箱和密码"); return; }
+  if(!email || !pass){ showAuthError(tr("enterEmailPass")); return; }
   try{
-    await applyChosenPersistence();
+    if($("keepSignedIn").checked){
+      localStorage.setItem(REMEMBER_EMAIL_KEY, email);
+    }else{
+      localStorage.removeItem(REMEMBER_EMAIL_KEY);
+    }
     await auth.signInWithEmailAndPassword(email, pass);
   }catch(e){
     showAuthError(translateAuthError(e));
@@ -668,26 +787,9 @@ $("emailRegisterBtn").addEventListener("click", async () => {
   showAuthError("");
   const email = $("authEmail").value.trim();
   const pass = $("authPassword").value;
-  if(!email || !pass){ showAuthError("请输入邮箱和密码"); return; }
+  if(!email || !pass){ showAuthError(tr("enterEmailPass")); return; }
   try{
-    await applyChosenPersistence();
     await auth.createUserWithEmailAndPassword(email, pass);
-  }catch(e){
-    showAuthError(translateAuthError(e));
-  }
-});
-
-$("forgotPasswordLink").addEventListener("click", async (evt) => {
-  evt.preventDefault();
-  showAuthError("");
-  const email = $("authEmail").value.trim();
-  if(!email){
-    showAuthError("请先在邮箱那一栏输入你的邮箱，再点忘记密码");
-    return;
-  }
-  try{
-    await auth.sendPasswordResetEmail(email);
-    showToast(`重设密码邮件已发送到 ${email}，去邮箱收信吧`);
   }catch(e){
     showAuthError(translateAuthError(e));
   }
@@ -696,24 +798,22 @@ $("forgotPasswordLink").addEventListener("click", async (evt) => {
 $("googleSignInBtn").addEventListener("click", async () => {
   showAuthError("");
   try{
-    await applyChosenPersistence();
-    if(window.authBridge && window.authBridge.getGoogleIdToken){
-      // Electron 桌面版：走系统浏览器跳转登录
-      const idToken = await window.authBridge.getGoogleIdToken();
-      const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
-      await auth.signInWithCredential(credential);
-    } else {
-      // 普通网页版（比如部署在 Cloudflare Pages）：用 Firebase 自带的弹窗登录
-      const provider = new firebase.auth.GoogleAuthProvider();
-      await auth.signInWithPopup(provider);
-    }
+    const { FirebaseAuthentication } = Capacitor.Plugins;
+    const result = await FirebaseAuthentication.signInWithGoogle();
+    const idToken = result.credential && result.credential.idToken;
+    if(!idToken) throw new Error(tr("noGoogleToken"));
+    const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+    await auth.signInWithCredential(credential);
   }catch(e){
-    showAuthError(translateAuthError(e));
+    console.error("Google 登录失败，完整错误：", e);
+    let detail = "";
+    try{ detail = JSON.stringify(e, Object.getOwnPropertyNames(e)); }catch(_){}
+    showAuthError(translateAuthError(e) + (detail ? ("\n\n完整信息：" + detail) : ""));
   }
 });
 
 $("logoutBtn").addEventListener("click", async () => {
-  const ok = await showConfirm("确定要退出登录吗？", "退出登录");
+  const ok = await showConfirm(tr("logoutConfirm"), tr("logoutTitle"));
   if(!ok) return;
   await auth.signOut();
 });
@@ -726,8 +826,8 @@ $("accountToggle").addEventListener("click", () => {
 auth.onAuthStateChanged((user) => {
   if(user){
     document.body.classList.add("authed");
-    $("accountEmailText").textContent = user.email ? `已登录：${user.email}` : "已登录";
-    $("authEmail").value = "";
+    $("accountEmailText").textContent = user.email ? `${tr("loggedIn")}: ${user.email}` : tr("loggedIn");
+    if(!$("keepSignedIn").checked) $("authEmail").value = "";
     $("authPassword").value = "";
     showAuthError("");
     startFirestoreSync(user.uid);
@@ -748,7 +848,7 @@ function showToast(msg){
 function render(){
   $("plateInput").value = state.plate || "";
   $("totalInput").value = state.totalLoan || "";
-  $("plateChip").textContent = state.plate ? state.plate : "未设置车牌";
+  $("plateChip").textContent = state.plate ? state.plate : tr("unsetPlate");
 
   const totalPaid = state.payments.reduce((s,p)=> s + Number(p.amount||0), 0);
   const remaining = Math.max(Number(state.totalLoan||0) - totalPaid, 0);
@@ -767,7 +867,7 @@ function render(){
 
   const list = $("historyList");
   if(state.payments.length === 0){
-    list.innerHTML = '<div class="empty-state">还没有还款记录，添加第一笔吧。</div>';
+    list.innerHTML = '<div class="empty-state" data-i18n="noPayments">还没有还款记录，添加第一笔吧。</div>';
     return;
   }
   const sorted = [...state.payments].sort((a,b)=> (a.date < b.date ? 1 : -1));
@@ -779,8 +879,8 @@ function render(){
         ${p.note ? `<div class="note">${escapeHtml(p.note)}</div>` : ""}
       </div>
       <div class="amt">${fmt(p.amount)}</div>
-      <button class="btn-edit-text" onclick="editPayment('${p.id}')">修改</button>
-      <button class="btn-danger-text" onclick="deletePayment('${p.id}')">删除</button>
+      <button class="btn-edit-text" onclick="editPayment('${p.id}')">${tr("edit")}</button>
+      <button class="btn-danger-text" onclick="deletePayment('${p.id}')">${tr("delete")}</button>
     </div>
   `).join("");
 }
@@ -794,11 +894,11 @@ function updatePayoffEstimate(remaining, totalPaid){
     return;
   }
   if(remaining <= 0){
-    el.textContent = "🎉 已还清";
+    el.textContent = tr("fullyPaid");
     return;
   }
   if(state.payments.length === 0){
-    el.textContent = "还没有还款记录";
+    el.textContent = tr("noPaymentYet");
     return;
   }
 
@@ -813,7 +913,7 @@ function updatePayoffEstimate(remaining, totalPaid){
   const avgMonthly = totalPaid / monthsElapsed;
 
   if(avgMonthly <= 0){
-    el.textContent = "还款速度不足以还清";
+    el.textContent = tr("insufficientRate");
     return;
   }
 
@@ -823,15 +923,15 @@ function updatePayoffEstimate(remaining, totalPaid){
 
   let text = "";
   if(years > 0 && remMonths > 0){
-    text = `${years} 年 ${remMonths} 个月`;
+    text = currentLanguage === "en" ? `${years} ${tr("year")}${years === 1 ? "" : "s"} ${remMonths} ${tr("month")}${remMonths === 1 ? "" : "s"}` : `${years} ${tr("year")} ${remMonths} ${tr("month")}`;
   } else if(years > 0){
-    text = `${years} 年`;
+    text = currentLanguage === "en" ? `${years} ${tr("year")}${years === 1 ? "" : "s"}` : `${years} ${tr("year")}`;
   } else {
-    text = `${remMonths} 个月`;
+    text = currentLanguage === "en" ? `${remMonths} ${tr("month")}${remMonths === 1 ? "" : "s"}` : `${remMonths} ${tr("month")}`;
   }
 
   el.textContent = text;
-  el.title = `按平均每月还 ${fmt(avgMonthly)} 计算`;
+  el.title = tr("avgMonthlyTitle", {amount: fmt(avgMonthly)});
 }
 
 function escapeHtml(str){
@@ -842,7 +942,7 @@ function escapeHtml(str){
 
 function showConfirm(message, title){
   return new Promise((resolve) => {
-    $("confirmTitle").textContent = title || "确认操作";
+    $("confirmTitle").textContent = title || tr("confirmAction");
     $("confirmMessage").textContent = message;
     $("confirmOverlay").classList.add("show");
 
@@ -868,7 +968,7 @@ async function deletePayment(id){
   if(editingPaymentId === id) exitEditMode();
   render();
   await saveState();
-  showToast("已删除该记录");
+  showToast(tr("deleted"));
 }
 window.deletePayment = deletePayment;
 
@@ -879,8 +979,8 @@ function editPayment(id){
   $("payAmount").value = p.amount;
   $("payDate").value = p.date;
   $("payNote").value = p.note || "";
-  $("payCardTitle").textContent = "修改还款记录";
-  $("addPayBtn").textContent = "保存修改";
+  $("payCardTitle").textContent = tr("editPayment");
+  $("addPayBtn").textContent = tr("saveChanges");
   $("cancelEditBtn").style.display = "inline-block";
   $("payAmount").focus();
 }
@@ -888,8 +988,8 @@ window.editPayment = editPayment;
 
 function exitEditMode(){
   editingPaymentId = null;
-  $("payCardTitle").textContent = "记录一笔还款";
-  $("addPayBtn").textContent = "添加还款记录";
+  $("payCardTitle").textContent = tr("recordPayment");
+  $("addPayBtn").textContent = tr("addPayment");
   $("cancelEditBtn").style.display = "none";
   $("payAmount").value = "";
   $("payNote").value = "";
@@ -909,32 +1009,32 @@ $("saveSettingsBtn").addEventListener("click", async () => {
   const plate = $("plateInput").value.trim();
   const total = parseFloat($("totalInput").value);
   if(!plate){
-    showToast("请输入车牌号码");
+    showToast(tr("enterPlate"));
     return;
   }
   if(isNaN(total) || total < 0){
-    showToast("请输入有效的贷款总额");
+    showToast(tr("invalidTotal"));
     return;
   }
   state.plate = plate;
   state.totalLoan = total;
   render();
   await saveState();
-  showToast("设置已保存");
+  showToast(tr("settingsSaved"));
 });
 
 $("clearSettingsBtn").addEventListener("click", async () => {
   if(!state.plate && !state.totalLoan){
-    showToast("目前没有已保存的车牌信息");
+    showToast(tr("noSavedPlate"));
     return;
   }
-  const ok = await showConfirm("确定要清除车牌号码和贷款总额吗？还款记录不会被删除。", "清除车牌信息");
+  const ok = await showConfirm(tr("clearConfirm"), tr("clearPlateTitle"));
   if(!ok) return;
   state.plate = "";
   state.totalLoan = 0;
   render();
   await saveState();
-  showToast("车牌信息已清除");
+  showToast(tr("plateCleared"));
 });
 
 $("addPayBtn").addEventListener("click", async () => {
@@ -942,11 +1042,11 @@ $("addPayBtn").addEventListener("click", async () => {
   const date = $("payDate").value || todayStr();
   const note = $("payNote").value.trim();
   if(isNaN(amount) || amount <= 0){
-    showToast("请输入有效的还款金额");
+    showToast(tr("invalidPayment"));
     return;
   }
   if(date > todayStr()){
-    showToast("日期不能选择未来的日子");
+    showToast(tr("futureDate"));
     return;
   }
 
@@ -960,7 +1060,7 @@ $("addPayBtn").addEventListener("click", async () => {
     exitEditMode();
     render();
     await saveState();
-    showToast("还款记录已更新");
+    showToast(tr("paymentUpdated"));
   } else {
     state.payments.push({
       id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
@@ -970,7 +1070,7 @@ $("addPayBtn").addEventListener("click", async () => {
     $("payNote").value = "";
     render();
     await saveState();
-    showToast("已添加还款记录");
+    showToast(tr("paymentAdded"));
   }
 });
 
