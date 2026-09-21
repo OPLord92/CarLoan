@@ -737,19 +737,29 @@ function translateAuthError(err){
   return map[err.code] ? tr(map[err.code]) : (err.message || tr("loginFailed"));
 }
 
-// Keep Me Signed In: remember only the email address, not the password or Firebase session.
+// Keep Me Signed In: remember the email and password on this device when selected.
+// The password field remains visually masked by type="password" until the eye icon is pressed.
 const REMEMBER_EMAIL_KEY = "carLoanRememberedEmail";
+const REMEMBER_PASSWORD_KEY = "carLoanRememberedPassword";
 const rememberedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
-if(rememberedEmail){
+const rememberedPassword = localStorage.getItem(REMEMBER_PASSWORD_KEY) || "";
+if(rememberedEmail || rememberedPassword){
   $("authEmail").value = rememberedEmail;
+  $("authPassword").value = rememberedPassword;
+  $("authPassword").type = "password";
   $("keepSignedIn").checked = true;
 }
 
-// If Keep Me Signed In is turned off, forget the saved email immediately.
-// Passwords are intentionally never stored.
+// Unticking Keep Me Signed In immediately forgets and clears both fields.
 $("keepSignedIn").addEventListener("change", () => {
   if(!$("keepSignedIn").checked){
     localStorage.removeItem(REMEMBER_EMAIL_KEY);
+    localStorage.removeItem(REMEMBER_PASSWORD_KEY);
+    $("authEmail").value = "";
+    $("authPassword").value = "";
+    $("authPassword").type = "password";
+    $("eyeNormal").style.display = "block";
+    $("eyeSlash").style.display = "none";
   }
 });
 
@@ -802,8 +812,10 @@ $("emailLoginBtn").addEventListener("click", async () => {
   try{
     if($("keepSignedIn").checked){
       localStorage.setItem(REMEMBER_EMAIL_KEY, email);
+      localStorage.setItem(REMEMBER_PASSWORD_KEY, pass);
     }else{
       localStorage.removeItem(REMEMBER_EMAIL_KEY);
+      localStorage.removeItem(REMEMBER_PASSWORD_KEY);
     }
     await auth.signInWithEmailAndPassword(email, pass);
   }catch(e){
@@ -826,17 +838,8 @@ $("emailRegisterBtn").addEventListener("click", async () => {
 $("googleSignInBtn").addEventListener("click", async () => {
   showAuthError("");
   try{
-    if(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.FirebaseAuthentication){
-      const { FirebaseAuthentication } = Capacitor.Plugins;
-      const result = await FirebaseAuthentication.signInWithGoogle();
-      const idToken = result.credential && result.credential.idToken;
-      if(!idToken) throw new Error(tr("noGoogleToken"));
-      const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
-      await auth.signInWithCredential(credential);
-    } else {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      await auth.signInWithPopup(provider);
-    }
+    const provider = new firebase.auth.GoogleAuthProvider();
+    await auth.signInWithPopup(provider);
   }catch(e){
     console.error("Google 登录失败，完整错误：", e);
     let detail = "";
@@ -860,13 +863,25 @@ auth.onAuthStateChanged((user) => {
   if(user){
     document.body.classList.add("authed");
     $("accountEmailText").textContent = user.email ? `${tr("loggedIn")}: ${user.email}` : tr("loggedIn");
-    if(!$("keepSignedIn").checked) $("authEmail").value = "";
-    $("authPassword").value = "";
+    if(!$("keepSignedIn").checked){
+      $("authEmail").value = "";
+      $("authPassword").value = "";
+    }
     showAuthError("");
     startFirestoreSync(user.uid);
   } else {
     document.body.classList.remove("authed");
     stopFirestoreSync();
+    if($("keepSignedIn").checked){
+      $("authEmail").value = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
+      $("authPassword").value = localStorage.getItem(REMEMBER_PASSWORD_KEY) || "";
+      $("authPassword").type = "password";
+      $("eyeNormal").style.display = "block";
+      $("eyeSlash").style.display = "none";
+    }else{
+      $("authEmail").value = "";
+      $("authPassword").value = "";
+    }
   }
 });
 
