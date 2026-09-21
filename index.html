@@ -798,12 +798,17 @@ $("emailRegisterBtn").addEventListener("click", async () => {
 $("googleSignInBtn").addEventListener("click", async () => {
   showAuthError("");
   try{
-    const { FirebaseAuthentication } = Capacitor.Plugins;
-    const result = await FirebaseAuthentication.signInWithGoogle();
-    const idToken = result.credential && result.credential.idToken;
-    if(!idToken) throw new Error(tr("noGoogleToken"));
-    const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
-    await auth.signInWithCredential(credential);
+    if(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform() && Capacitor.Plugins && Capacitor.Plugins.FirebaseAuthentication){
+      const { FirebaseAuthentication } = Capacitor.Plugins;
+      const result = await FirebaseAuthentication.signInWithGoogle();
+      const idToken = result.credential && result.credential.idToken;
+      if(!idToken) throw new Error(tr("noGoogleToken"));
+      const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+      await auth.signInWithCredential(credential);
+    } else {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
+    }
   }catch(e){
     console.error("Google 登录失败，完整错误：", e);
     let detail = "";
