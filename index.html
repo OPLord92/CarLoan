@@ -745,6 +745,14 @@ if(rememberedEmail){
   $("keepSignedIn").checked = true;
 }
 
+// If Keep Me Signed In is turned off, forget the saved email immediately.
+// Passwords are intentionally never stored.
+$("keepSignedIn").addEventListener("change", () => {
+  if(!$("keepSignedIn").checked){
+    localStorage.removeItem(REMEMBER_EMAIL_KEY);
+  }
+});
+
 // Use in-memory auth persistence so reopening the Android app shows the login screen.
 // The remembered email is restored separately when Keep Me Signed In is checked.
 auth.setPersistence(firebase.auth.Auth.Persistence.NONE).catch((e) => {
