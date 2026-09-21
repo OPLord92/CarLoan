@@ -17,6 +17,42 @@
     --danger: #C42B1C;
     --radius-card: 10px;
     --radius-ctrl: 6px;
+
+    --surface-window: rgba(255,255,255,0.55);
+    --surface-window-border: rgba(255,255,255,0.6);
+    --surface-strong: rgba(255,255,255,0.45);
+    --input-bg: rgba(255,255,255,0.9);
+    --input-border: rgba(0,0,0,0.14);
+    --ghost-bg: rgba(0,0,0,0.035);
+    --ghost-border: rgba(0,0,0,0.10);
+    --ghost-hover: rgba(0,0,0,0.06);
+    --modal-bg: #FAFAFA;
+    --chip-bg: rgba(0,0,0,0.04);
+    --ring-track: rgba(0,0,0,0.07);
+  }
+  body.dark{
+    --bg: #1D1D1D;
+    --card: rgba(45,45,45,0.65);
+    --border: rgba(255,255,255,0.09);
+    --text-primary: #F3F3F3;
+    --text-secondary: #B8B8B8;
+    --accent: #3AA0F0;
+    --accent-hover: #5CB3F5;
+    --accent-soft: rgba(58,160,240,0.18);
+    --success: #6CCB5F;
+    --danger: #FF99A4;
+
+    --surface-window: rgba(32,32,32,0.65);
+    --surface-window-border: rgba(255,255,255,0.08);
+    --surface-strong: rgba(32,32,32,0.55);
+    --input-bg: rgba(255,255,255,0.06);
+    --input-border: rgba(255,255,255,0.16);
+    --ghost-bg: rgba(255,255,255,0.06);
+    --ghost-border: rgba(255,255,255,0.14);
+    --ghost-hover: rgba(255,255,255,0.10);
+    --modal-bg: #2B2B2B;
+    --chip-bg: rgba(255,255,255,0.08);
+    --ring-track: rgba(255,255,255,0.10);
   }
   *{ box-sizing: border-box; }
   html,body{
@@ -29,6 +65,7 @@
     color: var(--text-primary);
     -webkit-font-smoothing: antialiased;
     overflow: hidden;
+    transition: background-color .2s ease, color .2s ease;
   }
   .app-window{
     height: 100vh;
@@ -38,7 +75,7 @@
     display:flex; align-items:center; gap:10px;
     padding: 14px 20px;
     border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.45);
+    background: var(--surface-strong);
     flex-shrink:0;
   }
   .titlebar .icon{
@@ -55,11 +92,98 @@
   .titlebar .plate-chip{
     margin-left:auto;
     font-size:13px; color:var(--text-secondary);
-    background: rgba(0,0,0,0.04);
+    background: var(--chip-bg);
     border:1px solid var(--border);
     padding: 4px 10px;
     border-radius: 6px;
   }
+  .theme-toggle{
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--ghost-bg);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; flex-shrink:0;
+    color: var(--text-secondary);
+    padding:0;
+  }
+  .theme-toggle:hover{ background: var(--ghost-hover); }
+  .theme-toggle svg{ width:16px; height:16px; }
+  .theme-toggle .icon-sun{ display:none; }
+  body.dark .theme-toggle .icon-moon{ display:none; }
+  body.dark .theme-toggle .icon-sun{ display:block; }
+
+  body:not(.authed) .app-window{ display:none; }
+  body.authed .auth-screen{ display:none; }
+
+  .auth-screen{
+    position: fixed; inset: 0;
+    display:flex; align-items:center; justify-content:center;
+    padding: 24px;
+  }
+  .auth-card{
+    width: 100%; max-width: 340px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 28px 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+  }
+  .auth-logo{
+    width:44px; height:44px; border-radius:11px;
+    background: linear-gradient(135deg, #0067C0, #2B88D8);
+    display:flex; align-items:center; justify-content:center;
+    margin: 0 auto 14px;
+  }
+  .auth-logo svg{ width:24px; height:24px; }
+  .auth-title{
+    font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+    font-size: 18px; font-weight:700; text-align:center; margin: 0 0 4px;
+  }
+  .auth-sub{
+    text-align:center; font-size:12.5px; color: var(--text-secondary);
+    margin: 0 0 20px;
+  }
+  .btn-google{
+    width:100%;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    background: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-primary);
+    padding: 9px 16px;
+    font-size: 13.5px; font-weight:600;
+  }
+  .btn-google:hover{ background: var(--ghost-hover); }
+  .auth-divider{
+    display:flex; align-items:center; text-align:center;
+    color: var(--text-secondary); font-size:12px;
+    margin: 16px 0;
+  }
+  .auth-divider::before, .auth-divider::after{
+    content:""; flex:1; height:1px; background: var(--border);
+  }
+  .auth-divider span{ padding: 0 10px; }
+  .auth-error{
+    margin-top: 14px; font-size:12.5px; color: var(--danger);
+    min-height: 1px;
+  }
+  .auth-row{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top: 4px;
+  }
+  .auth-checkbox{
+    display:flex; align-items:center; gap:7px;
+    font-size: 12.5px; color: var(--text-secondary);
+    cursor: pointer; user-select:none;
+  }
+  .auth-checkbox input{
+    width:15px; height:15px; margin:0; accent-color: var(--accent); cursor:pointer;
+  }
+  .auth-link{
+    font-size: 12.5px; color: var(--accent);
+    text-decoration:none;
+  }
+  .auth-link:hover{ text-decoration: underline; }
 
   .content{ padding: 22px 24px 28px; overflow-y:auto; flex:1; }
 
@@ -87,8 +211,8 @@
     font-family: inherit; font-size: 14px;
     padding: 8px 11px;
     border-radius: var(--radius-ctrl);
-    border: 1px solid rgba(0,0,0,0.14);
-    background: rgba(255,255,255,0.9);
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
     color: var(--text-primary);
     outline: none;
     transition: border-color .12s ease, box-shadow .12s ease;
@@ -110,18 +234,29 @@
   button:active{ transform: scale(0.98); }
   .btn-accent{ background: var(--accent); color:#fff; }
   .btn-accent:hover{ background: var(--accent-hover); }
+  .btn-ghost{
+    background: var(--ghost-bg);
+    color: var(--text-primary);
+    border-color: var(--ghost-border);
+  }
+  .btn-ghost:hover{ background: var(--ghost-hover); }
   .btn-danger-text{
     background: transparent; color: var(--danger);
     padding: 5px 9px; font-weight:500; font-size:12.5px;
   }
   .btn-danger-text:hover{ background: rgba(196,43,28,0.08); }
+  .btn-edit-text{
+    background: transparent; color: var(--accent);
+    padding: 5px 9px; font-weight:500; font-size:12.5px;
+  }
+  .btn-edit-text:hover{ background: var(--accent-soft); }
 
   .actions{ display:flex; gap:10px; margin-top:14px; }
 
   .overview-top{ display:flex; align-items:center; gap:22px; }
   .ring-wrap{ position:relative; width:112px; height:112px; flex-shrink:0; }
   .ring-wrap svg{ transform: rotate(-90deg); width:112px; height:112px; }
-  .ring-track{ fill:none; stroke: rgba(0,0,0,0.07); stroke-width:10; }
+  .ring-track{ fill:none; stroke: var(--ring-track); stroke-width:10; }
   .ring-progress{ fill:none; stroke: var(--accent); stroke-width:10; stroke-linecap: round; transition: stroke-dashoffset .4s ease; }
   .ring-label{
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -134,6 +269,12 @@
   .stat .v{ font-size:17px; font-weight:700; }
   .stat.remaining .v{ color: var(--accent); }
   .stat.paid .v{ color: var(--success); }
+  .stat.payoff{
+    padding-top: 10px;
+    margin-top: 2px;
+    border-top: 1px dashed var(--border);
+  }
+  .stat.payoff .v{ color: var(--accent); font-size: 18px; }
 
   .empty-state{
     text-align:center; padding: 30px 10px; color: var(--text-secondary); font-size:13.5px;
@@ -172,9 +313,89 @@
     z-index: 999;
   }
   .toast.show{ opacity:1; transform: translateX(-50%) translateY(0); }
+
+  .modal-overlay{
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000;
+  }
+  .modal-overlay.show{ display: flex; }
+  .modal-box{
+    width: 320px;
+    background: var(--modal-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  }
+  .modal-title{
+    font-family:"Segoe UI Variable Display","Segoe UI",system-ui,sans-serif;
+    font-size: 15px; font-weight:700; margin-bottom: 8px;
+  }
+  .modal-message{
+    font-size: 13.5px; color: var(--text-secondary); line-height:1.5; margin-bottom: 18px;
+  }
+  .modal-actions{
+    display:flex; justify-content:flex-end; gap:10px;
+  }
+
+  .info-box{
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    border: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .info-box.ok{ color: var(--success); }
+  .info-box.warn{ color: var(--danger); }
 </style>
 </head>
 <body>
+
+<div class="auth-screen" id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 16h16M4 16l1.5-5.5A2 2 0 0 1 7.4 9h9.2a2 2 0 0 1 1.9 1.5L20 16M4 16v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h10v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16.2" r="1.3" fill="white"/><circle cx="16.5" cy="16.2" r="1.3" fill="white"/></svg>
+    </div>
+    <h1 class="auth-title">车贷管家</h1>
+    <p class="auth-sub">登录后，手机和电脑的数据会自动同步</p>
+
+    <button class="btn-google" id="googleSignInBtn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      使用 Google 登录
+    </button>
+
+    <div class="auth-divider"><span>或</span></div>
+
+    <div class="field">
+      <label for="authEmail">邮箱</label>
+      <input id="authEmail" type="email" placeholder="you@example.com">
+    </div>
+    <div class="field">
+      <label for="authPassword">密码</label>
+      <input id="authPassword" type="password" placeholder="至少 6 位">
+    </div>
+
+    <div class="auth-row">
+      <label class="auth-checkbox">
+        <input type="checkbox" id="keepSignedIn" checked>
+        <span>记住我的登录状态</span>
+      </label>
+      <a href="#" id="forgotPasswordLink" class="auth-link">忘记密码？</a>
+    </div>
+
+    <div class="actions" style="margin-top:14px;">
+      <button class="btn-accent" id="emailLoginBtn" style="flex:1;">登录</button>
+      <button class="btn-ghost" id="emailRegisterBtn" style="flex:1;">注册新账号</button>
+    </div>
+
+    <div id="authError" class="auth-error"></div>
+  </div>
+</div>
 
 <div class="app-window">
   <div class="titlebar">
@@ -183,6 +404,10 @@
     </div>
     <h1>车贷管家</h1>
     <div class="plate-chip" id="plateChip">未设置车牌</div>
+    <button class="theme-toggle" id="themeToggleBtn" title="切换暗色模式">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
   </div>
 
   <div class="content">
@@ -218,6 +443,10 @@
             <div class="k">还款次数</div>
             <div class="v" id="countText">0</div>
           </div>
+          <div class="stat payoff" style="grid-column: 1 / -1;">
+            <div class="k">按目前还款速度，预计还剩</div>
+            <div class="v" id="payoffText">--</div>
+          </div>
         </div>
       </div>
     </div>
@@ -226,7 +455,7 @@
       <div class="settings-toggle" id="settingsToggle">
         <h2 style="margin:0;">车辆与贷款设置</h2>
         <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9l6 6 6-6" stroke="#5D5D5D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="settings-body" id="settingsBody">
@@ -242,12 +471,28 @@
         </div>
         <div class="actions">
           <button class="btn-accent" id="saveSettingsBtn">保存设置</button>
+          <button class="btn-ghost" id="clearSettingsBtn">清除车牌信息</button>
         </div>
       </div>
     </div>
 
     <div class="card">
-      <h2>记录一笔还款</h2>
+      <div class="settings-toggle" id="accountToggle">
+        <h2 style="margin:0;">账号</h2>
+        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none">
+          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="settings-body" id="accountBody">
+        <div id="accountEmailText" class="info-box" style="margin-bottom:14px;">未登录</div>
+        <div class="actions">
+          <button class="btn-ghost" id="logoutBtn">退出登录</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 id="payCardTitle">记录一笔还款</h2>
       <div class="row2">
         <div class="field">
           <label for="payAmount">还款金额 (RM)</label>
@@ -264,6 +509,7 @@
       </div>
       <div class="actions">
         <button class="btn-accent" id="addPayBtn">添加还款记录</button>
+        <button class="btn-ghost" id="cancelEditBtn" style="display:none;">取消编辑</button>
       </div>
     </div>
 
@@ -277,23 +523,40 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal-box">
+    <div class="modal-title" id="confirmTitle">确认操作</div>
+    <div class="modal-message" id="confirmMessage"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="confirmCancelBtn">取消</button>
+      <button class="btn-accent" id="confirmOkBtn">确认</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
 <script>
+// ==================================================================
+// 把下面这几行换成你自己 Firebase 项目的配置
+// （Firebase 控制台 → 项目设置 → 常规 → 你的应用 → SDK 设置和配置）
+// ==================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCMmGXhYMxtUpAPCJH0pfvlmCDyxvDYnqE",
   authDomain: "oplord-35fc0.firebaseapp.com",
   projectId: "oplord-35fc0",
   storageBucket: "oplord-35fc0.firebasestorage.app",
   messagingSenderId: "558480615816",
-  appId: "1:558480615816:web:e3283f7fdc1adce8e6b23d",
-  measurementId: "G-HPJ1G0BGGT"
+  appId: "1:558480615816:web:e3283f7fdc1adce8e6b23d"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let state = { plate: "", totalLoan: 0, payments: [] };
+let state = { plate: "", totalLoan: 0, payments: [], theme: null };
 
 const $ = (id) => document.getElementById(id);
 
@@ -306,18 +569,164 @@ function todayStr(){
   return d.toISOString().slice(0,10);
 }
 
-async function loadState(){
-  const data = await window.loanAPI.getData();
-  if(data){
-    state = Object.assign({plate:"", totalLoan:0, payments:[]}, data);
-  }
-  render();
+function applyTheme(theme){
+  document.body.classList.toggle("dark", theme === "dark");
+  $("themeToggleBtn").title = theme === "dark" ? "切换到亮色模式" : "切换到暗色模式";
 }
 
-async function saveState(){
-  const ok = await window.loanAPI.setData(state);
-  if(!ok) showToast("保存失败，请重试");
+let unsubscribeSnapshot = null;
+
+function startFirestoreSync(uid){
+  if(unsubscribeSnapshot) unsubscribeSnapshot();
+  const docRef = db.collection("users").doc(uid);
+  unsubscribeSnapshot = docRef.onSnapshot((snap) => {
+    if(snap.exists){
+      state = Object.assign({plate:"", totalLoan:0, payments:[], theme:null}, snap.data());
+    } else {
+      state = { plate:"", totalLoan:0, payments:[], theme: state.theme || null };
+      docRef.set(state);
+    }
+    if(!state.theme){
+      state.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ? "dark" : "light";
+    }
+    applyTheme(state.theme);
+    render();
+  }, (err) => {
+    console.error("Firestore sync error:", err);
+    const hint = err && err.code ? `（${err.code}）` : "";
+    showToast(`云端同步失败 ${hint}，请检查 Firestore 设置或网络`);
+  });
 }
+
+function stopFirestoreSync(){
+  if(unsubscribeSnapshot){ unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+}
+
+$("themeToggleBtn").addEventListener("click", async () => {
+  state.theme = state.theme === "dark" ? "light" : "dark";
+  applyTheme(state.theme);
+  await saveState();
+});
+
+async function saveState(){
+  const user = auth.currentUser;
+  if(!user) return;
+  try{
+    await db.collection("users").doc(user.uid).set(state);
+  }catch(e){
+    console.error("Firestore save error:", e);
+    const hint = e && e.code ? `（${e.code}）` : "";
+    showToast(`保存失败 ${hint}，请检查 Firestore 设置或网络`);
+  }
+}
+
+// ================== 登录 / 注册 / Google 登录 ==================
+function showAuthError(msg){
+  $("authError").textContent = msg || "";
+}
+
+function translateAuthError(err){
+  const map = {
+    "auth/invalid-email": "邮箱格式不对",
+    "auth/user-not-found": "这个邮箱还没有注册",
+    "auth/wrong-password": "密码不对",
+    "auth/invalid-credential": "邮箱或密码不对",
+    "auth/email-already-in-use": "这个邮箱已经注册过了，直接登录就好",
+    "auth/weak-password": "密码至少要 6 位",
+    "auth/network-request-failed": "网络连接失败，请检查网络",
+    "auth/popup-closed-by-user": "登录已取消",
+    "auth/too-many-requests": "尝试次数太多，请稍后再试",
+    "auth/missing-email": "请先输入邮箱"
+  };
+  return map[err.code] || (err.message || "登录失败，请重试");
+}
+
+async function applyChosenPersistence(){
+  const keep = $("keepSignedIn").checked;
+  await auth.setPersistence(
+    keep ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION
+  );
+}
+
+$("emailLoginBtn").addEventListener("click", async () => {
+  showAuthError("");
+  const email = $("authEmail").value.trim();
+  const pass = $("authPassword").value;
+  if(!email || !pass){ showAuthError("请输入邮箱和密码"); return; }
+  try{
+    await applyChosenPersistence();
+    await auth.signInWithEmailAndPassword(email, pass);
+  }catch(e){
+    showAuthError(translateAuthError(e));
+  }
+});
+
+$("emailRegisterBtn").addEventListener("click", async () => {
+  showAuthError("");
+  const email = $("authEmail").value.trim();
+  const pass = $("authPassword").value;
+  if(!email || !pass){ showAuthError("请输入邮箱和密码"); return; }
+  try{
+    await applyChosenPersistence();
+    await auth.createUserWithEmailAndPassword(email, pass);
+  }catch(e){
+    showAuthError(translateAuthError(e));
+  }
+});
+
+$("forgotPasswordLink").addEventListener("click", async (evt) => {
+  evt.preventDefault();
+  showAuthError("");
+  const email = $("authEmail").value.trim();
+  if(!email){
+    showAuthError("请先在邮箱那一栏输入你的邮箱，再点忘记密码");
+    return;
+  }
+  try{
+    await auth.sendPasswordResetEmail(email);
+    showToast(`重设密码邮件已发送到 ${email}，去邮箱收信吧`);
+  }catch(e){
+    showAuthError(translateAuthError(e));
+  }
+});
+
+$("googleSignInBtn").addEventListener("click", async () => {
+  showAuthError("");
+  try{
+    await applyChosenPersistence();
+    const idToken = await window.authBridge.getGoogleIdToken();
+    const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+    await auth.signInWithCredential(credential);
+  }catch(e){
+    showAuthError(translateAuthError(e));
+  }
+});
+
+$("logoutBtn").addEventListener("click", async () => {
+  const ok = await showConfirm("确定要退出登录吗？", "退出登录");
+  if(!ok) return;
+  await auth.signOut();
+});
+
+$("accountToggle").addEventListener("click", () => {
+  $("accountToggle").classList.toggle("open");
+  $("accountBody").classList.toggle("open");
+});
+
+auth.onAuthStateChanged((user) => {
+  if(user){
+    document.body.classList.add("authed");
+    $("accountEmailText").textContent = user.email ? `已登录：${user.email}` : "已登录";
+    $("authEmail").value = "";
+    $("authPassword").value = "";
+    showAuthError("");
+    startFirestoreSync(user.uid);
+  } else {
+    document.body.classList.remove("authed");
+    stopFirestoreSync();
+  }
+});
 
 function showToast(msg){
   const t = $("toast");
@@ -345,6 +754,8 @@ function render(){
   const circumference = 289;
   $("ring").style.strokeDashoffset = circumference - (pct * circumference);
 
+  updatePayoffEstimate(remaining, totalPaid);
+
   const list = $("historyList");
   if(state.payments.length === 0){
     list.innerHTML = '<div class="empty-state">还没有还款记录，添加第一笔吧。</div>';
@@ -359,9 +770,59 @@ function render(){
         ${p.note ? `<div class="note">${escapeHtml(p.note)}</div>` : ""}
       </div>
       <div class="amt">${fmt(p.amount)}</div>
+      <button class="btn-edit-text" onclick="editPayment('${p.id}')">修改</button>
       <button class="btn-danger-text" onclick="deletePayment('${p.id}')">删除</button>
     </div>
   `).join("");
+}
+
+// 根据实际还款记录，自动算出"按目前的还款速度"大约还要多久还清
+function updatePayoffEstimate(remaining, totalPaid){
+  const el = $("payoffText");
+
+  if(!state.totalLoan){
+    el.textContent = "--";
+    return;
+  }
+  if(remaining <= 0){
+    el.textContent = "🎉 已还清";
+    return;
+  }
+  if(state.payments.length === 0){
+    el.textContent = "还没有还款记录";
+    return;
+  }
+
+  // 计算从第一笔还款到今天，一共经过了几个月，取平均每月还款额
+  const dates = state.payments.map(p => new Date(p.date + "T00:00:00"));
+  const firstDate = new Date(Math.min(...dates));
+  const today = new Date();
+  let monthsElapsed = (today.getFullYear() - firstDate.getFullYear()) * 12
+                      + (today.getMonth() - firstDate.getMonth()) + 1;
+  monthsElapsed = Math.max(monthsElapsed, 1);
+
+  const avgMonthly = totalPaid / monthsElapsed;
+
+  if(avgMonthly <= 0){
+    el.textContent = "还款速度不足以还清";
+    return;
+  }
+
+  const monthsLeft = Math.ceil(remaining / avgMonthly);
+  const years = Math.floor(monthsLeft / 12);
+  const remMonths = monthsLeft % 12;
+
+  let text = "";
+  if(years > 0 && remMonths > 0){
+    text = `${years} 年 ${remMonths} 个月`;
+  } else if(years > 0){
+    text = `${years} 年`;
+  } else {
+    text = `${remMonths} 个月`;
+  }
+
+  el.textContent = text;
+  el.title = `按平均每月还 ${fmt(avgMonthly)} 计算`;
 }
 
 function escapeHtml(str){
@@ -370,13 +831,65 @@ function escapeHtml(str){
   return d.innerHTML;
 }
 
+function showConfirm(message, title){
+  return new Promise((resolve) => {
+    $("confirmTitle").textContent = title || "确认操作";
+    $("confirmMessage").textContent = message;
+    $("confirmOverlay").classList.add("show");
+
+    function cleanup(result){
+      $("confirmOverlay").classList.remove("show");
+      okBtn.removeEventListener("click", onOk);
+      cancelBtn.removeEventListener("click", onCancel);
+      resolve(result);
+    }
+    const okBtn = $("confirmOkBtn");
+    const cancelBtn = $("confirmCancelBtn");
+    function onOk(){ cleanup(true); }
+    function onCancel(){ cleanup(false); }
+    okBtn.addEventListener("click", onOk);
+    cancelBtn.addEventListener("click", onCancel);
+  });
+}
+
+let editingPaymentId = null;
+
 async function deletePayment(id){
   state.payments = state.payments.filter(p => p.id !== id);
+  if(editingPaymentId === id) exitEditMode();
   render();
   await saveState();
   showToast("已删除该记录");
 }
 window.deletePayment = deletePayment;
+
+function editPayment(id){
+  const p = state.payments.find(p => p.id === id);
+  if(!p) return;
+  editingPaymentId = id;
+  $("payAmount").value = p.amount;
+  $("payDate").value = p.date;
+  $("payNote").value = p.note || "";
+  $("payCardTitle").textContent = "修改还款记录";
+  $("addPayBtn").textContent = "保存修改";
+  $("cancelEditBtn").style.display = "inline-block";
+  $("payAmount").focus();
+}
+window.editPayment = editPayment;
+
+function exitEditMode(){
+  editingPaymentId = null;
+  $("payCardTitle").textContent = "记录一笔还款";
+  $("addPayBtn").textContent = "添加还款记录";
+  $("cancelEditBtn").style.display = "none";
+  $("payAmount").value = "";
+  $("payNote").value = "";
+  $("payDate").value = todayStr();
+}
+
+$("cancelEditBtn").addEventListener("click", () => {
+  exitEditMode();
+});
 
 $("settingsToggle").addEventListener("click", () => {
   $("settingsToggle").classList.toggle("open");
@@ -401,6 +914,20 @@ $("saveSettingsBtn").addEventListener("click", async () => {
   showToast("设置已保存");
 });
 
+$("clearSettingsBtn").addEventListener("click", async () => {
+  if(!state.plate && !state.totalLoan){
+    showToast("目前没有已保存的车牌信息");
+    return;
+  }
+  const ok = await showConfirm("确定要清除车牌号码和贷款总额吗？还款记录不会被删除。", "清除车牌信息");
+  if(!ok) return;
+  state.plate = "";
+  state.totalLoan = 0;
+  render();
+  await saveState();
+  showToast("车牌信息已清除");
+});
+
 $("addPayBtn").addEventListener("click", async () => {
   const amount = parseFloat($("payAmount").value);
   const date = $("payDate").value || todayStr();
@@ -409,19 +936,37 @@ $("addPayBtn").addEventListener("click", async () => {
     showToast("请输入有效的还款金额");
     return;
   }
-  state.payments.push({
-    id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
-    amount, date, note
-  });
-  $("payAmount").value = "";
-  $("payNote").value = "";
-  render();
-  await saveState();
-  showToast("已添加还款记录");
+  if(date > todayStr()){
+    showToast("日期不能选择未来的日子");
+    return;
+  }
+
+  if(editingPaymentId){
+    const p = state.payments.find(p => p.id === editingPaymentId);
+    if(p){
+      p.amount = amount;
+      p.date = date;
+      p.note = note;
+    }
+    exitEditMode();
+    render();
+    await saveState();
+    showToast("还款记录已更新");
+  } else {
+    state.payments.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      amount, date, note
+    });
+    $("payAmount").value = "";
+    $("payNote").value = "";
+    render();
+    await saveState();
+    showToast("已添加还款记录");
+  }
 });
 
+$("payDate").max = todayStr();
 $("payDate").value = todayStr();
-loadState();
 </script>
 
 </body>
