@@ -373,11 +373,11 @@
 
     <div class="field">
       <label for="authEmail">邮箱</label>
-      <input id="authEmail" type="email" placeholder="">
+      <input id="authEmail" type="email" placeholder="you@example.com">
     </div>
     <div class="field">
       <label for="authPassword">密码</label>
-      <input id="authPassword" type="password" placeholder="">
+      <input id="authPassword" type="password" placeholder="至少 6 位">
     </div>
 
     <div class="auth-row">
@@ -637,7 +637,9 @@ function translateAuthError(err){
     "auth/network-request-failed": "网络连接失败，请检查网络",
     "auth/popup-closed-by-user": "登录已取消",
     "auth/too-many-requests": "尝试次数太多，请稍后再试",
-    "auth/missing-email": "请先输入邮箱"
+    "auth/missing-email": "请先输入邮箱",
+    "auth/unauthorized-domain": "这个网址还没有在 Firebase 里加为「已获授权的网域」，去 Firebase 控制台 → Authentication → Settings → Authorized domains 里添加",
+    "auth/popup-blocked": "浏览器拦截了登录弹窗，请允许弹窗后重试"
   };
   return map[err.code] || (err.message || "登录失败，请重试");
 }
@@ -695,9 +697,16 @@ $("googleSignInBtn").addEventListener("click", async () => {
   showAuthError("");
   try{
     await applyChosenPersistence();
-    const idToken = await window.authBridge.getGoogleIdToken();
-    const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
-    await auth.signInWithCredential(credential);
+    if(window.authBridge && window.authBridge.getGoogleIdToken){
+      // Electron 桌面版：走系统浏览器跳转登录
+      const idToken = await window.authBridge.getGoogleIdToken();
+      const credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+      await auth.signInWithCredential(credential);
+    } else {
+      // 普通网页版（比如部署在 Cloudflare Pages）：用 Firebase 自带的弹窗登录
+      const provider = new firebase.auth.GoogleAuthProvider();
+      await auth.signInWithPopup(provider);
+    }
   }catch(e){
     showAuthError(translateAuthError(e));
   }
