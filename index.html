@@ -416,6 +416,121 @@ body.dark .auth-card .auth-logo{
 }
 </style>
 
+
+<style id="exact-user-file-colors">
+:root{
+    --bg: #F3F3F3;
+    --card: rgba(255,255,255,0.75);
+    --border: rgba(0,0,0,0.07);
+    --text-primary: #1B1B1B;
+    --text-secondary: #5D5D5D;
+    --accent: #0067C0;
+    --accent-hover: #005A9E;
+    --accent-soft: rgba(0,103,192,0.10);
+    --success: #107C10;
+    --danger: #C42B1C;
+    --radius-card: 10px;
+    --radius-ctrl: 6px;
+
+    --surface-window: rgba(255,255,255,0.55);
+    --surface-window-border: rgba(255,255,255,0.6);
+    --surface-strong: rgba(255,255,255,0.45);
+    --input-bg: rgba(255,255,255,0.9);
+    --input-border: rgba(0,0,0,0.14);
+    --ghost-bg: rgba(0,0,0,0.035);
+    --ghost-border: rgba(0,0,0,0.10);
+    --ghost-hover: rgba(0,0,0,0.06);
+    --modal-bg: #FAFAFA;
+    --chip-bg: rgba(0,0,0,0.04);
+    --ring-track: rgba(0,0,0,0.07);
+  }
+body.dark{
+    --bg: #1D1D1D;
+    --card: rgba(45,45,45,0.65);
+    --border: rgba(255,255,255,0.09);
+    --text-primary: #F3F3F3;
+    --text-secondary: #B8B8B8;
+    --accent: #3AA0F0;
+    --accent-hover: #5CB3F5;
+    --accent-soft: rgba(58,160,240,0.18);
+    --success: #6CCB5F;
+    --danger: #FF99A4;
+
+    --surface-window: rgba(32,32,32,0.65);
+    --surface-window-border: rgba(255,255,255,0.08);
+    --surface-strong: rgba(32,32,32,0.55);
+    --input-bg: rgba(255,255,255,0.06);
+    --input-border: rgba(255,255,255,0.16);
+    --ghost-bg: rgba(255,255,255,0.06);
+    --ghost-border: rgba(255,255,255,0.14);
+    --ghost-hover: rgba(255,255,255,0.10);
+    --modal-bg: #2B2B2B;
+    --chip-bg: rgba(255,255,255,0.08);
+    --ring-track: rgba(255,255,255,0.10);
+  }
+
+html,body,.auth-screen{
+  background:
+    radial-gradient(1200px 600px at 15% -10%, rgba(0,103,192,0.10), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(0,103,192,0.06), transparent 55%),
+    var(--bg) !important;
+  color:var(--text-primary) !important;
+}
+.auth-card{
+  background:var(--card) !important;
+  border:1px solid var(--border) !important;
+  color:var(--text-primary) !important;
+  box-shadow:0 20px 60px rgba(0,0,0,0.12) !important;
+}
+.auth-card .auth-title{color:var(--text-primary) !important;}
+.auth-card .auth-sub,.auth-card .field label,.auth-card .keep-signed-in,.auth-card .divider{
+  color:var(--text-secondary) !important;
+}
+.auth-card .language-toggle,.auth-card .theme-toggle{
+  background:var(--ghost-bg) !important;
+  border-color:var(--border) !important;
+  color:var(--text-primary) !important;
+}
+.auth-card .language-toggle:hover,.auth-card .theme-toggle:hover{background:var(--ghost-hover) !important;}
+.auth-card input[type=email],.auth-card input[type=password],.auth-card input[type=text]{
+  background:var(--input-bg) !important;
+  border-color:var(--input-border) !important;
+  color:var(--text-primary) !important;
+}
+.auth-card input:focus{
+  border-color:var(--accent) !important;
+  outline:none !important;
+  box-shadow:0 0 0 3px var(--accent-soft) !important;
+}
+.auth-card .password-eye{color:var(--text-secondary) !important;}
+.auth-card .forgot-password{color:var(--accent) !important;}
+.auth-card #emailLoginBtn{
+  background:var(--accent) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+}
+.auth-card #emailLoginBtn:hover{background:var(--accent-hover) !important;}
+.auth-card #emailRegisterBtn{
+  background:var(--ghost-bg) !important;
+  color:var(--text-primary) !important;
+  border-color:var(--ghost-border) !important;
+}
+.auth-card #emailRegisterBtn:hover{background:var(--ghost-hover) !important;}
+.auth-card .divider::before,.auth-card .divider::after{background:var(--border) !important;}
+.auth-card .social-btn,.auth-card .btn-google{
+  background:var(--input-bg) !important;
+  color:var(--text-primary) !important;
+  border-color:var(--input-border) !important;
+}
+.auth-card .social-btn:hover,.auth-card .btn-google:hover{background:var(--ghost-hover) !important;}
+.auth-card .auth-error{color:var(--danger) !important;}
+.auth-card .auth-logo{
+  background:linear-gradient(135deg,#0067C0,#2B88D8) !important;
+}
+body.dark .auth-card .auth-logo svg path{stroke:white !important;}
+body.dark .auth-card .auth-logo svg circle{fill:white !important;}
+</style>
+
 </head>
 <body>
 
