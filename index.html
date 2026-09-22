@@ -531,6 +531,174 @@ body.dark .auth-card .auth-logo svg path{stroke:white !important;}
 body.dark .auth-card .auth-logo svg circle{fill:white !important;}
 </style>
 
+
+<style id="wesave-light-blue-login-override">
+body:not(.dark) .auth-screen{
+  background:
+    radial-gradient(1100px 600px at 15% -10%, rgba(0,103,192,.10), transparent 60%),
+    radial-gradient(850px 480px at 100% 0%, rgba(0,103,192,.06), transparent 55%),
+    #F3F7FB !important;
+}
+body:not(.dark) .auth-screen .auth-card{
+  background:#FFFFFF !important;
+  border:1px solid #D5E2EE !important;
+  box-shadow:0 8px 30px rgba(0,103,192,.08) !important;
+  color:#1B1B1B !important;
+}
+body:not(.dark) .auth-screen .auth-title{ color:#1B1B1B !important; }
+body:not(.dark) .auth-screen .auth-sub,
+body:not(.dark) .auth-screen .field label,
+body:not(.dark) .auth-screen .keep-signed-in{ color:#5D5D5D !important; }
+body:not(.dark) .auth-screen .forgot-password{ color:#0067C0 !important; }
+body:not(.dark) .auth-screen .language-toggle,
+body:not(.dark) .auth-screen .theme-toggle{
+  background:#FFFFFF !important;
+  border:1px solid #D5E2EE !important;
+  color:#1B1B1B !important;
+}
+body:not(.dark) .auth-screen .language-toggle:hover,
+body:not(.dark) .auth-screen .theme-toggle:hover{ background:#F5F9FD !important; }
+body:not(.dark) .auth-screen input[type="email"],
+body:not(.dark) .auth-screen input[type="password"],
+body:not(.dark) .auth-screen input[type="text"]{
+  background:#FFFFFF !important;
+  border:1px solid #D5E2EE !important;
+  color:#1B1B1B !important;
+}
+body:not(.dark) .auth-screen input:focus{
+  border-color:#0067C0 !important;
+  box-shadow:0 0 0 3px rgba(0,103,192,.10) !important;
+  outline:none !important;
+}
+body:not(.dark) .auth-screen .password-eye{ color:#6B7280 !important; }
+body:not(.dark) .auth-screen #emailLoginBtn{
+  background:#0067C0 !important;
+  color:#FFFFFF !important;
+  border-color:#0067C0 !important;
+}
+body:not(.dark) .auth-screen #emailLoginBtn:hover{ background:#005A9E !important; }
+body:not(.dark) .auth-screen #emailRegisterBtn{
+  background:#FFFFFF !important;
+  color:#1B1B1B !important;
+  border:1px solid #D5E2EE !important;
+}
+body:not(.dark) .auth-screen #emailRegisterBtn:hover{ background:#F7FAFD !important; }
+body:not(.dark) .auth-screen .btn-google,
+body:not(.dark) .auth-screen .social-btn{
+  background:#FFFFFF !important;
+  color:#1B1B1B !important;
+  border:1px solid #D5E2EE !important;
+}
+body:not(.dark) .auth-screen .btn-google:hover,
+body:not(.dark) .auth-screen .social-btn:hover{ background:#F7FAFD !important; }
+body:not(.dark) .auth-screen .auth-divider,
+body:not(.dark) .auth-screen .divider{ color:#5D5D5D !important; }
+body:not(.dark) .auth-screen .auth-divider::before,
+body:not(.dark) .auth-screen .auth-divider::after,
+body:not(.dark) .auth-screen .divider::before,
+body:not(.dark) .auth-screen .divider::after{ background:#D5E2EE !important; }
+body:not(.dark) .auth-screen .auth-logo{
+  background:linear-gradient(135deg, #0067C0, #2B88D8) !important;
+}
+body:not(.dark) .auth-screen .auth-error{ color:#C42B1C !important; }
+</style>
+
+
+<style id="wesave-dark-login-color-like-reference">
+/* Dark-mode login colors matched to the provided screenshot. Main page is untouched. */
+body.dark .auth-screen{
+  background:#1D1D1D !important;
+  background-image:none !important;
+}
+body.dark .auth-screen .auth-card{
+  background:rgba(45,45,45,0.65) !important;
+  border:1px solid rgba(255,255,255,0.09) !important;
+  border-radius:10px !important;
+  box-shadow:0 20px 60px rgba(0,0,0,0.25) !important;
+  color:#F3F3F3 !important;
+}
+body.dark .auth-screen .auth-title{
+  color:#F3F3F3 !important;
+}
+body.dark .auth-screen .auth-sub,
+body.dark .auth-screen .field label,
+body.dark .auth-screen .keep-signed-in{
+  color:#B8B8B8 !important;
+}
+body.dark .auth-screen .forgot-password{
+  color:#60A5FA !important;
+}
+body.dark .auth-screen .language-toggle,
+body.dark .auth-screen .theme-toggle{
+  background:rgba(255,255,255,0.06) !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+  color:#F3F3F3 !important;
+}
+body.dark .auth-screen .language-toggle:hover,
+body.dark .auth-screen .theme-toggle:hover{
+  background:rgba(255,255,255,0.10) !important;
+}
+body.dark .auth-screen input[type="email"],
+body.dark .auth-screen input[type="password"],
+body.dark .auth-screen input[type="text"]{
+  background:rgba(255,255,255,0.06) !important;
+  border:1px solid rgba(255,255,255,0.16) !important;
+  color:#F3F3F3 !important;
+}
+body.dark .auth-screen input:focus{
+  border-color:#3AA0F0 !important;
+  box-shadow:0 0 0 3px rgba(58,160,240,0.18) !important;
+  outline:none !important;
+}
+body.dark .auth-screen .password-eye{
+  color:#B8B8B8 !important;
+}
+body.dark .auth-screen #emailLoginBtn{
+  background:#5A96DF !important;
+  border-color:#5A96DF !important;
+  color:#FFFFFF !important;
+}
+body.dark .auth-screen #emailLoginBtn:hover{
+  background:#6BA4EA !important;
+  border-color:#6BA4EA !important;
+}
+body.dark .auth-screen #emailRegisterBtn{
+  background:rgba(255,255,255,0.06) !important;
+  color:#F3F3F3 !important;
+  border:1px solid rgba(255,255,255,0.14) !important;
+}
+body.dark .auth-screen #emailRegisterBtn:hover{
+  background:rgba(255,255,255,0.10) !important;
+}
+body.dark .auth-screen .btn-google,
+body.dark .auth-screen .social-btn{
+  background:rgba(255,255,255,0.06) !important;
+  color:#F3F3F3 !important;
+  border:1px solid rgba(255,255,255,0.16) !important;
+}
+body.dark .auth-screen .btn-google:hover,
+body.dark .auth-screen .social-btn:hover{
+  background:rgba(255,255,255,0.10) !important;
+}
+body.dark .auth-screen .auth-divider,
+body.dark .auth-screen .divider{
+  color:#B8B8B8 !important;
+}
+body.dark .auth-screen .auth-divider::before,
+body.dark .auth-screen .auth-divider::after,
+body.dark .auth-screen .divider::before,
+body.dark .auth-screen .divider::after{
+  background:rgba(255,255,255,0.10) !important;
+}
+body.dark .auth-screen .auth-logo{
+  background:linear-gradient(135deg, #2D7FEF, #5A96DF) !important;
+  box-shadow:none !important;
+}
+body.dark .auth-screen .auth-error{
+  color:#FF99A4 !important;
+}
+</style>
+
 </head>
 <body>
 
