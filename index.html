@@ -991,6 +991,25 @@ body.dark .auth-card .auth-logo{
 body.dark .auth-card .auth-error{ color:#FF99A4 !important; }
 </style>
 
+
+<style id="auth-main-page-visibility-fix">
+/* Login screen must disappear completely after authentication. */
+body.authed #authScreen,
+body.authed .auth-screen{
+  display:none !important;
+}
+
+/* Main page must remain hidden before login and restore normally after login. */
+body:not(.authed) .app-window{
+  display:none !important;
+}
+body.authed .app-window{
+  display:flex !important;
+  width:100% !important;
+  height:100vh !important;
+}
+</style>
+
 </head>
 <body>
 
