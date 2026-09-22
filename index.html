@@ -366,6 +366,56 @@
   .info-box.ok{ color: var(--success); }
   .info-box.warn{ color: var(--danger); }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style id="wesave-login-interface">
+.auth-screen{min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:4rem 1.5rem;background:radial-gradient(1100px 600px at 15% -10%,rgba(0,103,192,.10),transparent 60%),radial-gradient(850px 480px at 100% 0%,rgba(0,103,192,.06),transparent 55%),#F3F7FB;font-family:'Inter',sans-serif}
+.auth-card{width:100%;max-width:340px;margin:0 auto;padding:1.75rem;background:#fff;border:1px solid #D5E2EE;border-radius:6px;box-shadow:0 8px 30px rgba(0,103,192,.06)}
+.auth-language-row{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:-10px -6px 10px 0}
+.auth-card .language-toggle,.auth-card .theme-toggle{height:30px;border-radius:7px;border:1px solid #D5E2EE;background:transparent;color:#1B1B1B;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600}
+.auth-card .language-toggle{min-width:48px;padding:0 9px;font-size:12px}.auth-card .theme-toggle{width:30px;padding:0;display:flex;align-items:center;justify-content:center}.auth-card .theme-toggle svg{width:16px;height:16px}
+.auth-card .auth-logo,.auth-card .auth-sub{display:none}
+.auth-card .auth-title{font-family:'Source Serif 4',serif;font-size:1.4rem;font-weight:600;margin:0 0 1.25rem;text-align:center;color:#1B1B1B}
+.auth-card .field{margin-bottom:.6rem}.auth-card .field label{display:block;margin:0 0 .25rem;font-size:.7rem;color:#5D5D5D;font-weight:400}
+.auth-card input[type=email],.auth-card input[type=password],.auth-card input[type=text]{width:100%;font-family:'Inter',sans-serif;font-size:.9rem;padding:.45rem .5rem;border:1px solid #D5E2EE;border-radius:4px;background:#fff;color:#1B1B1B;box-shadow:none}
+.auth-card input:focus{outline:2px solid #0067C0;outline-offset:1px}.auth-card .password-wrapper{position:relative}.auth-card .password-wrapper input{padding-right:2.2rem}
+.auth-card .password-eye{position:absolute;right:.45rem;top:50%;transform:translateY(-50%);width:1.4rem;height:1.4rem;padding:0;border:0;background:transparent;color:#5D5D5D;display:flex;align-items:center;justify-content:center;cursor:pointer}.auth-card .password-eye svg{width:17px;height:17px}
+.auth-card .auth-options{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.5rem;margin-top:.6rem}
+.auth-card .keep-signed-in{display:flex;align-items:center;gap:.45rem;margin:0;font-size:.8rem;color:#5D5D5D;cursor:default;user-select:none}.auth-card .keep-signed-in input{width:13px;height:13px;margin:0;padding:0;appearance:auto;-webkit-appearance:auto;border:0;outline:0;box-shadow:none;background:transparent;border-radius:0;cursor:pointer;flex:0 0 13px}
+.auth-card .forgot-password{color:#5D5D5D;font-size:.78rem;text-decoration:underline;cursor:pointer;white-space:nowrap}.auth-card .forgot-password:hover{color:#A4262C}
+.auth-card .actions{display:flex!important;gap:.6rem!important;margin-top:1.1rem!important}.auth-card .actions button{flex:1!important;border-radius:4px!important;padding:.55rem!important;font-family:'Inter',sans-serif!important;font-size:.85rem!important;font-weight:600!important;cursor:pointer!important;box-shadow:none!important}
+.auth-card #emailLoginBtn{background:#0067C0!important;color:#fff!important;border:0!important}.auth-card #emailLoginBtn:hover{background:#005A9E!important}.auth-card #emailRegisterBtn{background:transparent!important;color:#1B1B1B!important;border:1px solid #D5E2EE!important}
+.auth-card .divider{display:flex;align-items:center;gap:.6rem;margin:1.25rem 0 .9rem;color:#5D5D5D;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em}.auth-card .divider:before,.auth-card .divider:after{content:"";flex:1;height:1px;background:#D5E2EE}
+.auth-card .social-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:.6rem;margin:0 0 .55rem;padding:.55rem;background:#fff;border:1px solid #D5E2EE;border-radius:4px;box-shadow:none;font-family:'Inter',sans-serif;font-size:.85rem;font-weight:500;color:#1B1B1B;cursor:pointer}.auth-card .social-btn:hover{border-color:#1B1B1B}.auth-card .social-btn svg{width:18px;height:18px;flex-shrink:0}.auth-card #facebookSignInBtn{background:#1877F2;color:#fff;border-color:#1877F2}.auth-card #facebookSignInBtn:hover{background:#1461C9}
+.auth-card .auth-error{color:#A4262C;font-size:.8rem;margin-top:.75rem;min-height:1.1em;text-align:center}
+body.dark .auth-screen{background:#1D211E}body.dark .auth-card{background:#292D29;border-color:#4B504B;box-shadow:none}body.dark .auth-card .auth-title{color:#F2F0E6}body.dark .auth-card .field label,body.dark .auth-card .keep-signed-in,body.dark .auth-card .forgot-password,body.dark .auth-card .divider{color:#B9B7AD}body.dark .auth-card .language-toggle,body.dark .auth-card .theme-toggle{border-color:#4B504B;color:#F2F0E6}
+body.dark .auth-card input[type=email],body.dark .auth-card input[type=password],body.dark .auth-card input[type=text]{background:#222622;color:#F2F0E6;border-color:#4B504B}body.dark .auth-card #emailLoginBtn{background:#F2F0E6!important;color:#1D211E!important}body.dark .auth-card #emailRegisterBtn{color:#F2F0E6!important;border-color:#4B504B!important}body.dark .auth-card .divider:before,body.dark .auth-card .divider:after{background:#4B504B}body.dark .auth-card .social-btn{background:#222622;color:#F2F0E6;border-color:#4B504B}body.dark .auth-card #facebookSignInBtn{background:#1877F2;color:#fff;border-color:#1877F2}
+@media(max-width:480px){.auth-screen{padding:2rem 1rem}.auth-card{padding:1.4rem}}
+</style>
+
+<style id="car-loan-login-logo">
+.auth-card .auth-logo{
+  width:56px;
+  height:56px;
+  margin:4px auto 14px;
+  border-radius:12px;
+  background:#2B88D8;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 18px rgba(0,103,192,.18);
+}
+.auth-card .auth-logo svg{
+  width:32px;
+  height:32px;
+  display:block;
+}
+body.dark .auth-card .auth-logo{
+  background:#2B88D8;
+  box-shadow:none;
+}
+</style>
+
 </head>
 <body>
 
