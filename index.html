@@ -531,103 +531,6 @@ body.dark .auth-card .auth-logo svg path{stroke:white !important;}
 body.dark .auth-card .auth-logo svg circle{fill:white !important;}
 </style>
 
-<style id="wesave-dark">
-body.dark,body.dark .auth-screen{background:#1D1D1D!important;background-image:none!important;color:#F3F3F3!important}
-body.dark .auth-card{background:rgba(45,45,45,.65)!important;border-color:rgba(255,255,255,.09)!important;box-shadow:0 20px 60px rgba(0,0,0,.25)!important}
-body.dark .auth-card .auth-title{color:#F3F3F3!important}
-body.dark .auth-card .auth-sub,body.dark .auth-card .field label,body.dark .auth-card .keep-signed-in,body.dark .auth-card .divider{color:#B8B8B8!important}
-body.dark .auth-card .forgot-password{color:#60A5FA!important}
-body.dark .auth-card .language-toggle,body.dark .auth-card .theme-toggle{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.14)!important;color:#F3F3F3!important}
-body.dark .auth-card input[type=email],body.dark .auth-card input[type=password],body.dark .auth-card input[type=text]{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.16)!important;color:#F3F3F3!important}
-body.dark .auth-card input:focus{border-color:#3AA0F0!important;box-shadow:0 0 0 3px rgba(58,160,240,.18)!important;outline:none!important}
-body.dark .auth-card .password-eye{color:#B8B8B8!important}
-body.dark .auth-card #emailLoginBtn{background:#3AA0F0!important;color:#fff!important;border-color:#3AA0F0!important}
-body.dark .auth-card #emailLoginBtn:hover{background:#5CB3F5!important}
-body.dark .auth-card #emailRegisterBtn,body.dark .auth-card .social-btn,body.dark .auth-card .btn-google{background:rgba(255,255,255,.06)!important;color:#F3F3F3!important;border-color:rgba(255,255,255,.14)!important}
-body.dark .auth-card #emailRegisterBtn:hover,body.dark .auth-card .social-btn:hover,body.dark .auth-card .btn-google:hover{background:rgba(255,255,255,.10)!important}
-body.dark .auth-card .divider:before,body.dark .auth-card .divider:after{background:rgba(255,255,255,.09)!important}
-body.dark .auth-card #facebookSignInBtn{background:#1877F2!important;color:#fff!important;border-color:#1877F2!important}
-body.dark .auth-card .auth-error{color:#FF99A4!important}
-body.dark .auth-card .auth-logo{background:linear-gradient(135deg,#0067C0,#2B88D8)!important;box-shadow:none!important}
-body.dark .auth-card .auth-logo svg path{stroke:#fff!important}body.dark .auth-card .auth-logo svg circle{fill:#fff!important}
-</style>
-<style id="wesave-login-interface-only-fixed">
-/* IMPORTANT: all rules are scoped to #authScreen so the main Car Loan Manager page stays unchanged. */
-#authScreen.auth-screen{
-  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-  padding:24px;
-}
-#authScreen .auth-card{
-  width:100%; max-width:400px; padding:28px 30px;
-  border-radius:10px;
-}
-#authScreen .auth-language-row{
-  display:flex; justify-content:flex-end; align-items:center; gap:8px;
-  margin:-10px -6px 8px 0;
-}
-#authScreen .language-toggle,#authScreen .theme-toggle{
-  height:30px; border-radius:7px;
-}
-#authScreen .auth-logo{
-  display:flex!important; width:44px; height:44px; margin:0 auto 14px;
-  border-radius:11px;
-}
-#authScreen .auth-logo svg{width:24px;height:24px;display:block}
-#authScreen .auth-title{
-  display:block; font-family:'Source Serif 4',serif;
-  font-size:1.4rem; font-weight:600; text-align:center;
-  margin:0 0 16px;
-}
-#authScreen .auth-sub{display:none!important}
-#authScreen .field{margin-bottom:10px}
-#authScreen .field label{margin-bottom:5px}
-#authScreen .field input{padding:9px 10px;border-radius:4px}
-#authScreen .password-wrap{position:relative}
-#authScreen .password-wrap input{padding-right:2.2rem}
-#authScreen .password-eye{
-  position:absolute; right:.45rem; top:50%; transform:translateY(-50%);
-  width:1.4rem; height:1.4rem; padding:0; border:0; background:transparent;
-  display:flex; align-items:center; justify-content:center;
-}
-#authScreen .password-eye:hover{background:transparent}
-#authScreen .password-eye svg{width:17px;height:17px}
-#authScreen .auth-options{
-  display:flex; justify-content:space-between; align-items:center;
-  gap:.5rem; margin-top:10px;
-}
-#authScreen .keep-signed-in{font-size:.8rem;gap:.45rem}
-#authScreen .keep-signed-in input{width:13px;height:13px;margin:0}
-#authScreen .forgot-password{font-size:.78rem;text-decoration:underline}
-#authScreen .actions{
-  display:flex!important; gap:.6rem!important; margin-top:14px!important;
-}
-#authScreen .actions button{
-  flex:1!important; border-radius:4px!important; padding:.55rem!important;
-  font-size:.85rem!important; font-weight:600!important; box-shadow:none!important;
-}
-#authScreen .auth-divider{
-  display:flex; align-items:center; gap:.6rem;
-  margin:16px 0; font-size:.7rem; text-transform:uppercase; letter-spacing:.06em;
-}
-#authScreen .auth-divider::before,#authScreen .auth-divider::after{content:'';flex:1;height:1px}
-#authScreen .btn-google{
-  width:100%; min-height:42px; display:flex; align-items:center; justify-content:center;
-  gap:.6rem; padding:9px 14px; border-radius:4px; font-size:.85rem; font-weight:600;
-}
-#authScreen .auth-error{margin-top:6px}
-@media (max-height:680px){
-  #authScreen .auth-card{max-width:390px;padding:16px 24px}
-  #authScreen .auth-logo{width:36px;height:36px;margin-bottom:7px}
-  #authScreen .auth-logo svg{width:20px;height:20px}
-  #authScreen .auth-title{margin-bottom:8px}
-  #authScreen .field{margin-bottom:5px}
-  #authScreen .field label{margin-bottom:2px}
-  #authScreen .field input{padding:6px 9px}
-  #authScreen .auth-options{margin-top:5px}
-  #authScreen .auth-divider{margin:8px 0}
-  #authScreen .btn-google{min-height:35px;padding:6px 12px}
-}
-</style>
 </head>
 <body>
 
@@ -640,12 +543,18 @@ body.dark .auth-card .auth-logo svg path{stroke:#fff!important}body.dark .auth-c
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
     </div>
-
     <div class="auth-logo">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 16h16M4 16l1.5-5.5A2 2 0 0 1 7.4 9h9.2a2 2 0 0 1 1.9 1.5L20 16M4 16v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h10v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16.2" r="1.3" fill="white"/><circle cx="16.5" cy="16.2" r="1.3" fill="white"/></svg>
     </div>
     <h1 class="auth-title" data-i18n="appTitle">车贷管家</h1>
     <p class="auth-sub" data-i18n="authSub">登录后，手机和电脑的数据会自动同步</p>
+
+    <button class="btn-google" id="googleSignInBtn">
+      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+      <span data-i18n="googleLogin">使用 Google 登录</span>
+    </button>
+
+    <div class="auth-divider"><span data-i18n="or">或</span></div>
 
     <div class="field">
       <label for="authEmail" data-i18n="email">邮箱</label>
@@ -670,17 +579,10 @@ body.dark .auth-card .auth-logo svg path{stroke:#fff!important}body.dark .auth-c
       <a class="forgot-password" id="forgotPasswordLink" href="#" data-i18n="forgotPassword">Forgot Password?</a>
     </div>
 
-    <div class="actions">
-      <button class="btn-accent" id="emailLoginBtn" data-i18n="login">登录</button>
-      <button class="btn-ghost" id="emailRegisterBtn" data-i18n="register">注册新账号</button>
+    <div class="actions" style="margin-top:14px;">
+      <button class="btn-accent" id="emailLoginBtn" style="flex:1;" data-i18n="login">登录</button>
+      <button class="btn-ghost" id="emailRegisterBtn" style="flex:1;" data-i18n="register">注册新账号</button>
     </div>
-
-    <div class="auth-divider"><span data-i18n="or">或</span></div>
-
-    <button class="btn-google" id="googleSignInBtn">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-      <span data-i18n="googleLogin">使用 Google 登录</span>
-    </button>
 
     <div id="authError" class="auth-error"></div>
   </div>
