@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Car Loan Manager</title>
+<title>车贷管家</title>
 <style>
   :root{
     --bg: #F3F3F3;
@@ -841,6 +841,24 @@ $("googleSignInBtn").addEventListener("click", async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     await auth.signInWithPopup(provider);
   }catch(e){
+    // A cancelled Google sign-in is not an error. Return quietly to the login screen.
+    const code = String((e && e.code) || "").toLowerCase();
+    const message = String((e && e.message) || e || "").toLowerCase();
+    const cancelled =
+      code.includes("popup-closed-by-user") ||
+      code.includes("cancelled-popup-request") ||
+      code.includes("canceled") || code.includes("cancelled") ||
+      code === "12501" ||
+      message.includes("popup closed") ||
+      message.includes("closed by the user") ||
+      message.includes("user canceled") || message.includes("user cancelled") ||
+      message.includes("sign in canceled") || message.includes("sign-in canceled") ||
+      message.includes("sign in cancelled") || message.includes("sign-in cancelled") ||
+      message.includes("12501");
+    if(cancelled){
+      showAuthError("");
+      return;
+    }
     console.error("Google 登录失败，完整错误：", e);
     let detail = "";
     try{ detail = JSON.stringify(e, Object.getOwnPropertyNames(e)); }catch(_){}
