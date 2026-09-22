@@ -550,7 +550,646 @@ body.dark .auth-card #facebookSignInBtn{background:#1877F2!important;color:#fff!
 body.dark .auth-card .auth-error{color:#FF99A4!important}
 body.dark .auth-card .auth-logo{background:linear-gradient(135deg,#0067C0,#2B88D8)!important;box-shadow:none!important}
 body.dark .auth-card .auth-logo svg path{stroke:#fff!important}body.dark .auth-card .auth-logo svg circle{fill:#fff!important}
-</style></head>
+</style>
+<style id="wesave-login-exact-reference">
+
+  :root{
+    --ink:#1B1B1B;
+    --ink-soft:#5D5D5D;
+    --paper:#F3F7FB;
+    --paper-raised:#FFFFFF;
+    --line:#D5E2EE;
+    --line-soft:#E5EDF5;
+    --mustard:#0067C0;
+    --mustard-deep:#005A9E;
+    --moss:#2B88D8;
+    --moss-deep:#0067C0;
+    --clay:#C42B1C;
+    --clay-deep:#A4262C;
+    --radius:6px;
+  }
+  body.dark{
+    --ink:#F2F0E6;
+    --ink-soft:#B9B7AD;
+    --paper:#1D211E;
+    --paper-raised:#292D29;
+    --line:#4B504B;
+    --line-soft:#3B403B;
+    --mustard:#D9A34F;
+    --mustard-deep:#F0B95F;
+    --moss:#4B9B78;
+    --moss-deep:#72C29D;
+    --clay:#D06B51;
+    --clay-deep:#F08A70;
+  }
+  body.dark{
+    background:#1D211E;
+  }
+  body.dark input, body.dark select{background:#222622;color:var(--ink);}
+  body.dark .social-btn{background:#222622;color:var(--ink);}
+  body.dark #facebookSignInBtn{background:#1877F2;color:#fff;}
+  body.dark #emailRegisterBtn{color:var(--ink);}
+  body.dark .secondary-btn{color:var(--ink);}
+  body.dark .balance-main .amount{color:var(--ink);}
+
+  .auth-language-row{
+    display:flex;justify-content:flex-end;align-items:center;gap:8px;
+    margin:-10px -6px 10px 0;
+  }
+  .main-controls{display:flex;align-items:center;gap:8px;margin-left:auto;}
+  .language-toggle,.theme-toggle{
+    height:30px;border-radius:7px;border:1px solid var(--line);
+    background:transparent;color:var(--ink);cursor:pointer;font-family:'Inter',sans-serif;
+    font-weight:600;
+  }
+  .language-toggle{min-width:48px;padding:0 9px;font-size:12px;}
+  .theme-toggle{width:30px;padding:0;display:flex;align-items:center;justify-content:center;}
+  .theme-toggle svg{width:16px;height:16px;}
+  .theme-toggle .icon-sun{display:none;}
+  body.dark .theme-toggle .icon-moon{display:none;}
+  body.dark .theme-toggle .icon-sun{display:block;}
+  .language-toggle:hover,.theme-toggle:hover{background:var(--line-soft);}
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 600px at 15% -10%, rgba(0,103,192,0.10), transparent 60%),
+      radial-gradient(850px 480px at 100% 0%, rgba(0,103,192,0.06), transparent 55%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    padding:2.5rem 1.5rem 4rem;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px;margin:0 auto;}
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:0.75rem;
+    margin-bottom:1.75rem;
+  }
+  .masthead h1{
+    font-family:'Source Serif 4',serif;
+    font-weight:600;
+    font-size:1.5rem;
+    margin:0;
+    letter-spacing:0.01em;
+  }
+  .masthead .today{
+    font-size:0.8rem;
+    color:var(--ink-soft);
+  }
+  .balance-block{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:2rem;
+    flex-wrap:wrap;
+    gap:1rem;
+  }
+  .balance-main .label{
+    font-size:0.75rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    margin-bottom:0.15rem;
+  }
+  .balance-main .amount{
+    font-family:'Source Serif 4',serif;
+    font-size:2.75rem;
+    font-weight:600;
+    font-variant-numeric:tabular-nums;
+    line-height:1;
+  }
+  .mini-stats{display:flex;gap:1.75rem;}
+  .mini-stats div .label{font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);}
+  .mini-stats div .val{font-family:'Source Serif 4',serif;font-size:1.15rem;font-weight:500;font-variant-numeric:tabular-nums;}
+  .mini-stats .in .val{color:var(--moss-deep);}
+  .mini-stats .out .val{color:var(--clay-deep);}
+
+  .panel{margin-bottom:2.25rem;}
+  .panel-title{
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    margin-bottom:0.75rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+
+  form.entry{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0.6rem 0.75rem;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:1rem;
+  }
+  form.entry .full{grid-column:1/-1;}
+  .type-toggle{display:flex;gap:0;grid-column:1/-1;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  .type-toggle button{
+    flex:1;
+    padding:0.5rem;
+    border:none;
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-size:0.85rem;
+    font-weight:500;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .type-toggle button.active.income{background:var(--moss);color:#fff;}
+  .type-toggle button.active.expense{background:var(--clay);color:#fff;}
+
+  label{font-size:0.7rem;color:var(--ink-soft);display:block;margin-bottom:0.25rem;}
+  input,select{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:0.9rem;
+    padding:0.45rem 0.5rem;
+    border:1px solid var(--line);
+    border-radius:4px;
+    background:#fff;
+    color:var(--ink);
+  }
+  input:focus,select:focus{outline:2px solid var(--mustard);outline-offset:1px;}
+  .add-btn{
+    grid-column:1/-1;
+    background:var(--ink);
+    color:var(--paper);
+    border:none;
+    border-radius:4px;
+    padding:0.6rem;
+    font-size:0.85rem;
+    font-weight:600;
+    cursor:pointer;
+    letter-spacing:0.02em;
+  }
+  .add-btn:hover{background:var(--moss-deep);}
+
+  input.field-error, select.field-error{
+    border-color:var(--clay-deep)!important;
+    outline:2px solid var(--clay-deep);
+    outline-offset:1px;
+  }
+  .form-error-msg{
+    grid-column:1/-1;
+    color:var(--clay-deep);
+    font-size:0.78rem;
+    margin-top:-0.3rem;
+  }
+  .form-error-msg.hidden{display:none;}
+
+  .ledger{border-top:2px solid var(--ink);}
+  .row{
+    display:grid;
+    grid-template-columns:52px 1fr auto 24px;
+    gap:0.75rem;
+    align-items:center;
+    padding:0.65rem 0.15rem;
+    border-bottom:1px solid var(--line-soft);
+    font-size:0.88rem;
+  }
+  .row .date{color:var(--ink-soft);font-size:0.75rem;}
+  .row .desc{font-weight:500;}
+  .row .cat{color:var(--ink-soft);font-size:0.75rem;display:block;}
+  .row .amt{font-variant-numeric:tabular-nums;font-weight:500;text-align:right;}
+  .row .amt.income{color:var(--moss-deep);}
+  .row .amt.expense{color:var(--clay-deep);}
+  .row .del{
+    background:none;border:none;color:var(--ink-soft);cursor:pointer;font-size:1rem;
+    line-height:1;padding:0;
+  }
+  .row .del:hover{color:var(--clay-deep);}
+  .empty-row{padding:1.25rem 0;color:var(--ink-soft);font-size:0.85rem;text-align:center;}
+
+  .budgets{display:flex;flex-direction:column;gap:0.9rem;}
+  .budget-item{}
+  .budget-head{display:flex;justify-content:space-between;align-items:center;font-size:0.83rem;margin-bottom:0.3rem;}
+  .budget-head .cat-name{font-weight:500;}
+  .budget-head .right{display:flex;align-items:center;gap:0.5rem;}
+  .budget-head .fig{font-variant-numeric:tabular-nums;color:var(--ink-soft);}
+  .budget-head .icon-btn{
+    background:none;border:none;cursor:pointer;color:var(--ink-soft);
+    font-size:0.78rem;padding:0;line-height:1;
+  }
+  .budget-head .icon-btn:hover{color:var(--ink);}
+  .budget-head .icon-btn.del-budget:hover{color:var(--clay-deep);}
+  .bar-track{height:7px;border-radius:4px;background:var(--paper-raised);border:1px solid var(--line);overflow:hidden;}
+  .bar-fill{height:100%;background:var(--moss);}
+  .bar-fill.over{background:var(--clay);}
+  .budget-set{
+    display:flex;
+    gap:0.5rem;
+    margin-top:1rem;
+  }
+  .budget-set select{flex:1.2;}
+  .budget-set input{flex:0.8;}
+  .budget-set button{
+    background:var(--mustard);
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    padding:0 0.9rem;
+    font-size:0.85rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .budget-set button:hover{background:var(--mustard-deep);}
+
+  .auth-card{
+    max-width:340px;
+    margin:4rem auto;
+    padding:1.75rem;
+    background:var(--paper-raised);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+  }
+  .auth-card h1{
+    font-family:'Source Serif 4',serif;
+    font-size:1.4rem;
+    font-weight:600;
+    margin:0 0 1.25rem;
+    text-align:center;
+  }
+  .auth-card label{margin-top:0.6rem;}
+  .password-wrapper{position:relative;}
+  .password-wrapper input{padding-right:2.2rem;}
+  .password-eye{
+    position:absolute;right:0.45rem;top:50%;transform:translateY(-50%);
+    width:1.4rem;height:1.4rem;padding:0;border:none;background:transparent;
+    color:var(--ink-soft);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .password-eye:hover{color:var(--ink);}
+  .password-eye svg{width:17px;height:17px;display:block;}
+  .password-eye .icon-eye-closed{display:none;}
+  .password-eye.showing .icon-eye-open{display:none;}
+  .password-eye.showing .icon-eye-closed{display:block;}
+  .auth-options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:0.5rem;
+    margin-top:0.6rem;
+  }
+  .keep-signed-in{
+    display:flex;
+    align-items:center;
+    gap:0.45rem;
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    cursor:default;
+    user-select:none;
+  }
+  .keep-signed-in input{
+    width:13px;
+    height:13px;
+    margin:0;
+    padding:0;
+    appearance:auto;
+    -webkit-appearance:auto;
+    border:none;
+    outline:none;
+    box-shadow:none;
+    background:transparent;
+    border-radius:0;
+    box-sizing:border-box;
+    cursor:pointer;
+    flex:0 0 13px;
+  }
+  .forgot-password{color:var(--ink-soft);font-size:0.78rem;text-decoration:underline;cursor:pointer;white-space:nowrap;}
+  .forgot-password:hover{color:var(--clay-deep);}
+  .auth-card .auth-actions{
+    display:flex;
+    gap:0.6rem;
+    margin-top:1.1rem;
+  }
+  .auth-card .auth-actions button{
+    flex:1;
+    border:none;
+    border-radius:4px;
+    padding:0.55rem;
+    font-size:0.85rem;
+    font-weight:600;
+    cursor:pointer;
+  }
+  #emailLoginBtn{background:var(--ink);color:var(--paper);}
+  #emailLoginBtn:hover{background:var(--moss-deep);}
+  #emailRegisterBtn{background:transparent;color:var(--ink);border:1px solid var(--line)!important;}
+  #emailRegisterBtn:hover{border-color:var(--ink)!important;}
+  .auth-error{
+    color:var(--clay-deep);
+    font-size:0.8rem;
+    margin-top:0.75rem;
+    min-height:1.1em;
+    text-align:center;
+  }
+  #authStatus{
+    font-size:0.8rem;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:0.75rem;
+  }
+  .logout-link{
+    background:none;
+    border:none;
+    color:var(--ink-soft);
+    font-size:0.75rem;
+    cursor:pointer;
+    text-decoration:underline;
+    padding:0;
+    margin-left:0.75rem;
+  }
+  .logout-link:hover{color:var(--clay-deep);}
+  .hidden{display:none!important;}
+  #forgotScreen{max-width:340px;margin:4rem auto;padding:1.75rem;background:var(--paper-raised);border:1px solid var(--line);border-radius:var(--radius);}
+  #forgotScreen h1{font-family:'Source Serif 4',serif;font-size:1.4rem;text-align:center;margin:0 0 1.25rem;}
+  .secondary-btn{width:100%;margin-top:.65rem;padding:.55rem;border:1px solid var(--line);background:transparent;border-radius:4px;cursor:pointer;font-weight:600;color:var(--ink);}
+  .secondary-btn:hover{border-color:var(--ink);}
+
+  .divider{
+    display:flex;
+    align-items:center;
+    gap:0.6rem;
+    margin:1.25rem 0 0.9rem;
+    color:var(--ink-soft);
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .divider::before,
+  .divider::after{
+    content:'';
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+  .social-buttons{display:flex;flex-direction:column;gap:0.55rem;}
+  .social-btn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:0.6rem;
+    width:100%;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:0.55rem;
+    font-family:'Inter',sans-serif;
+    font-size:0.85rem;
+    font-weight:500;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  .social-btn:hover{border-color:var(--ink);}
+  .social-btn svg{width:18px;height:18px;flex-shrink:0;}
+  #facebookSignInBtn{background:#1877F2;border-color:#1877F2;color:#fff;}
+  #facebookSignInBtn:hover{background:#1461C9;}
+
+
+/* Login / Reset screens: same color treatment as Car Loan Manager */
+body:not(.dark) .auth-card,body:not(.dark) #forgotScreen{background:rgba(255,255,255,.75);border:1px solid rgba(0,0,0,.07);box-shadow:0 20px 60px rgba(0,0,0,.12);color:#1B1B1B}
+body:not(.dark) .auth-card input,body:not(.dark) #forgotScreen input{background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.14);color:#1B1B1B}
+body:not(.dark) .auth-card label,body:not(.dark) #forgotScreen label,body:not(.dark) #authStatus{color:#5D5D5D}
+body:not(.dark) #emailRegisterBtn,body:not(.dark) #backToLoginBtn{background:rgba(0,0,0,.035);border-color:rgba(0,0,0,.10)!important;color:#1B1B1B}
+body:not(.dark) .social-btn:not(#facebookSignInBtn){background:rgba(255,255,255,.9);border-color:rgba(0,0,0,.14);color:#1B1B1B}
+body:not(.dark) .auth-language-row .language-toggle,body:not(.dark) .auth-language-row .theme-toggle{background:rgba(0,0,0,.035);border-color:rgba(0,0,0,.10);color:#1B1B1B}
+
+body.dark .auth-card,body.dark #forgotScreen{background:rgba(45,45,45,.65);border:1px solid rgba(255,255,255,.09);box-shadow:0 20px 60px rgba(0,0,0,.30);color:#F3F3F3}
+body.dark .auth-card input,body.dark #forgotScreen input{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#F3F3F3}
+body.dark .auth-card label,body.dark #forgotScreen label,body.dark #authStatus{color:#B8B8B8}
+body.dark #emailLoginBtn,body.dark #resetBtn{background:#3AA0F0;color:#fff}
+body.dark #emailLoginBtn:hover,body.dark #resetBtn:hover{background:#5CB3F5}
+body.dark #emailRegisterBtn,body.dark #backToLoginBtn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14)!important;color:#F3F3F3}
+body.dark .social-btn:not(#facebookSignInBtn){background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#F3F3F3}
+body.dark .auth-language-row .language-toggle,body.dark .auth-language-row .theme-toggle{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.14);color:#F3F3F3}
+body.dark .forgot-password{color:#60A5FA}
+body.dark .auth-card input:focus,body.dark #forgotScreen input:focus{outline-color:#3AA0F0}
+
+
+.auth-logo{
+  width:44px;height:44px;border-radius:11px;
+  background:linear-gradient(135deg,#0067C0,#2B88D8);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.auth-logo svg{width:25px;height:25px}
+.auth-card>.auth-logo{
+  margin:0 auto 14px;
+}
+.main-brand{
+  display:flex;align-items:center;gap:10px;
+}
+.main-brand .auth-logo{
+  width:32px;height:32px;border-radius:8px;
+}
+.main-brand .auth-logo svg{width:19px;height:19px}
+.main-brand h1{margin:0}
+
+
+
+
+/* Login screen: compact, centered and fitted to one viewport like Car Loan Manager */
+body:has(.auth-card:not(.hidden)){
+  overflow:hidden;
+}
+.auth-card{
+  max-height:calc(100dvh - 24px);
+  overflow:hidden;
+  margin:12px auto;
+  padding:20px 24px;
+}
+.auth-card .auth-language-row{
+  margin:-6px -6px 4px 0;
+}
+.auth-card>.auth-logo{
+  width:40px;
+  height:40px;
+  margin:0 auto 8px;
+}
+.auth-card>.auth-logo svg{
+  width:22px;
+  height:22px;
+}
+.auth-card h1{
+  margin-top:0;
+  margin-bottom:12px;
+}
+.auth-card label{
+  margin-top:8px;
+  margin-bottom:4px;
+}
+.auth-card input{
+  padding-top:8px;
+  padding-bottom:8px;
+}
+.auth-card .auth-options{
+  margin-top:8px;
+}
+.auth-card .auth-actions{
+  margin-top:10px;
+}
+.auth-card .divider{
+  margin:10px 0;
+}
+.auth-card .social-btn{
+  min-height:38px;
+  padding-top:8px;
+  padding-bottom:8px;
+}
+.auth-card .auth-error,
+.auth-card #authStatus{
+  margin-top:6px;
+}
+
+/* Extra compression for shorter laptop/mobile-height screens */
+@media (max-height:720px){
+  .auth-card{
+    padding:14px 22px;
+    margin:6px auto;
+    max-height:calc(100dvh - 12px);
+  }
+  .auth-card .auth-language-row{margin-bottom:2px}
+  .auth-card>.auth-logo{
+    width:34px;height:34px;margin-bottom:5px;
+  }
+  .auth-card>.auth-logo svg{width:19px;height:19px}
+  .auth-card h1{font-size:1.55rem;margin-bottom:7px}
+  .auth-card label{margin-top:5px;margin-bottom:2px}
+  .auth-card input{padding-top:6px;padding-bottom:6px}
+  .auth-card .auth-options{margin-top:5px}
+  .auth-card .divider{margin:7px 0}
+  .auth-card .social-btn{min-height:34px;padding-top:6px;padding-bottom:6px}
+  .auth-card .auth-error,.auth-card #authStatus{margin-top:3px}
+}
+
+
+/* ===== Login page sizing/background matched to Car Loan Manager ===== */
+
+/* One solid background only — no split band / no gradient */
+body:not(.dark){
+  background:#F3F3F3 !important;
+  background-image:none !important;
+}
+body.dark{
+  background:#1D1D1D !important;
+  background-image:none !important;
+}
+
+/* Make the login screen use the whole viewport like Car Loan Manager */
+body:has(.auth-card:not(.hidden)){
+  min-height:100vh;
+  min-height:100dvh;
+  overflow:hidden;
+}
+body:has(.auth-card:not(.hidden)) .auth-card{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:100%;
+  max-width:400px;
+  max-height:none;
+  margin:0;
+  padding:28px 30px;
+  overflow:visible;
+}
+
+/* Restore Car Loan Manager-like spacing instead of the extra compressed layout */
+.auth-card .auth-language-row{margin:-10px -6px 8px 0}
+.auth-card>.auth-logo{
+  width:44px;
+  height:44px;
+  margin:0 auto 14px;
+}
+.auth-card>.auth-logo svg{width:24px;height:24px}
+.auth-card h1{margin-top:0;margin-bottom:16px}
+.auth-card label{margin-top:10px;margin-bottom:5px}
+.auth-card input{padding-top:9px;padding-bottom:9px}
+.auth-card .auth-options{margin-top:10px}
+.auth-card .divider{margin:16px 0}
+.auth-card .social-btn{min-height:42px;padding-top:9px;padding-bottom:9px}
+.auth-card .auth-error,.auth-card #authStatus{margin-top:6px}
+
+/* On genuinely short screens, shrink only enough to keep everything visible */
+@media (max-height:680px){
+  body:has(.auth-card:not(.hidden)) .auth-card{
+    padding:16px 24px;
+    max-width:390px;
+  }
+  .auth-card>.auth-logo{width:36px;height:36px;margin-bottom:7px}
+  .auth-card>.auth-logo svg{width:20px;height:20px}
+  .auth-card h1{margin-bottom:8px}
+  .auth-card label{margin-top:5px;margin-bottom:2px}
+  .auth-card input{padding-top:6px;padding-bottom:6px}
+  .auth-card .auth-options{margin-top:5px}
+  .auth-card .divider{margin:8px 0}
+  .auth-card .social-btn{min-height:35px;padding-top:6px;padding-bottom:6px}
+}
+
+</style>
+<style>
+.auth-card .auth-logo{display:flex!important}
+.auth-screen{min-height:100vh!important}
+</style>
+<style id="auth-screenshot-match">
+#authScreen.auth-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg, rgba(0,0,0,.12), rgba(0,0,0,.16));}
+#authScreen .auth-card{width:100%;max-width:370px;padding:20px 28px 26px;border-radius:12px;background:rgba(255,255,255,.86);border:1px solid rgba(0,0,0,.08);box-shadow:0 18px 50px rgba(0,0,0,.12);backdrop-filter:blur(2px);}
+body.dark #authScreen .auth-card{background:rgba(36,36,36,.88);border-color:rgba(255,255,255,.08);box-shadow:0 18px 50px rgba(0,0,0,.32);}
+#authScreen .auth-language-row{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 18px;}
+#authScreen .language-toggle,#authScreen .theme-toggle{width:auto;min-width:48px;height:36px;padding:0 12px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#F3F3F3;font-size:12px;font-weight:700;box-shadow:none;}
+body:not(.dark) #authScreen .language-toggle,body:not(.dark) #authScreen .theme-toggle{background:rgba(0,0,0,.035);border-color:rgba(0,0,0,.10);color:#1B1B1B;}
+#authScreen .theme-toggle{min-width:36px;width:36px;padding:0;display:flex;align-items:center;justify-content:center;}
+#authScreen .auth-logo{display:flex!important;width:46px;height:46px;margin:0 auto 16px;border-radius:12px;background:linear-gradient(135deg,#0B80E8,#2C98F2);align-items:center;justify-content:center;box-shadow:none;}
+#authScreen .auth-logo svg{width:24px;height:24px;display:block;}
+#authScreen .auth-title{display:block;font-family:'Source Serif 4',serif;font-size:24px;font-weight:600;line-height:1.15;text-align:center;color:#1B1B1B;margin:0 0 22px;}
+body.dark #authScreen .auth-title{color:#F3F3F3;}
+#authScreen .auth-sub{display:block!important;text-align:center;font-size:12px;color:#6B6B6B;margin:-12px 0 20px;} body.dark #authScreen .auth-sub{color:#B8B8B8;}
+#authScreen .field{margin-bottom:14px;}
+#authScreen .field label{display:block;font-size:12px;color:#666;margin:0 0 7px;font-weight:400;}
+body.dark #authScreen .field label{color:#B8B8B8;}
+#authScreen .field input{width:100%;height:40px;padding:9px 12px;border-radius:4px;border:1px solid rgba(0,0,0,.12);background:rgba(255,255,255,.90);color:#1B1B1B;font-size:14px;box-shadow:none;}
+body.dark #authScreen .field input{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#F3F3F3;}
+#authScreen .field input:focus{outline:none;border-color:#3AA0F0;box-shadow:0 0 0 3px rgba(58,160,240,.18);}
+#authScreen .password-wrap{position:relative;}
+#authScreen .password-wrap input{padding-right:40px;}
+#authScreen .password-eye{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:24px;height:24px;padding:0;border:none;background:transparent;color:#8A8A8A;display:flex;align-items:center;justify-content:center;box-shadow:none;}
+body.dark #authScreen .password-eye{color:#B8B8B8;}
+#authScreen .password-eye:hover{background:transparent;}
+#authScreen .password-eye svg{width:18px;height:18px;}
+#authScreen .auth-options{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 16px;}
+#authScreen .keep-signed-in{display:flex;align-items:center;gap:8px;font-size:12px;color:#666;}
+body.dark #authScreen .keep-signed-in{color:#B8B8B8;}
+#authScreen .keep-signed-in input{width:13px;height:13px;margin:0;accent-color:#3AA0F0;cursor:pointer;}
+#authScreen .forgot-password{font-size:12px;color:#2D8CFF;text-decoration:none;}
+#authScreen .forgot-password:hover{text-decoration:underline;}
+#authScreen .actions{display:grid!important;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 18px!important;}
+#authScreen .actions button{width:100%;height:42px;border-radius:4px;font-size:14px;font-weight:600;padding:0;box-shadow:none;}
+#authScreen #emailLoginBtn{background:#3AA0F0!important;border:1px solid #3AA0F0!important;color:#fff!important;}
+#authScreen #emailLoginBtn:hover{background:#5CB3F5!important;border-color:#5CB3F5!important;}
+#authScreen #emailRegisterBtn{background:rgba(0,0,0,.03)!important;border:1px solid rgba(0,0,0,.12)!important;color:#1B1B1B!important;}
+body.dark #authScreen #emailRegisterBtn{background:rgba(255,255,255,.06)!important;border-color:rgba(255,255,255,.14)!important;color:#F3F3F3!important;}
+#authScreen .continue-divider{display:flex;align-items:center;gap:10px;margin:0 0 16px;color:#7B7B7B;font-size:12px;text-align:center;}
+body.dark #authScreen .continue-divider{color:#B8B8B8;}
+#authScreen .continue-divider::before,#authScreen .continue-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,.10);}
+body.dark #authScreen .continue-divider::before,body.dark #authScreen .continue-divider::after{background:rgba(255,255,255,.10);}
+#authScreen .continue-divider span{white-space:nowrap;}
+#authScreen .social-stack{display:flex;flex-direction:column;gap:10px;}
+#authScreen .social-btn{width:100%;height:42px;border-radius:4px;display:flex;align-items:center;justify-content:center;gap:10px;padding:0 14px;background:rgba(255,255,255,.90);border:1px solid rgba(0,0,0,.14);color:#1B1B1B;font-size:14px;font-weight:600;box-shadow:none;}
+body.dark #authScreen .social-btn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#F3F3F3;}
+#authScreen .social-btn svg{width:18px;height:18px;flex:none;}
+#authScreen .auth-error{margin-top:12px;min-height:1em;font-size:12.5px;text-align:left;color:#FF99A4;white-space:pre-wrap;word-break:break-word;}
+body:not(.dark) #authScreen .auth-error{color:#C42B1C;}
+</style>
+</head>
 <body>
 
 <div class="auth-screen" id="authScreen">
@@ -562,18 +1201,11 @@ body.dark .auth-card .auth-logo svg path{stroke:#fff!important}body.dark .auth-c
         <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
       </button>
     </div>
-    <div class="auth-logo">
+    <div class="auth-logo" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 16h16M4 16l1.5-5.5A2 2 0 0 1 7.4 9h9.2a2 2 0 0 1 1.9 1.5L20 16M4 16v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h10v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16.2" r="1.3" fill="white"/><circle cx="16.5" cy="16.2" r="1.3" fill="white"/></svg>
     </div>
     <h1 class="auth-title" data-i18n="appTitle">车贷管家</h1>
     <p class="auth-sub" data-i18n="authSub">登录后，手机和电脑的数据会自动同步</p>
-
-    <button class="btn-google" id="googleSignInBtn">
-      <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
-      <span data-i18n="googleLogin">使用 Google 登录</span>
-    </button>
-
-    <div class="auth-divider"><span data-i18n="or">或</span></div>
 
     <div class="field">
       <label for="authEmail" data-i18n="email">邮箱</label>
@@ -593,14 +1225,23 @@ body.dark .auth-card .auth-logo svg path{stroke:#fff!important}body.dark .auth-c
     <div class="auth-options">
       <label class="keep-signed-in" for="keepSignedIn">
         <input id="keepSignedIn" type="checkbox">
-        <span data-i18n="keepSigned">Keep Me Signed In</span>
+        <span data-i18n="keepSigned">保持登录资料</span>
       </label>
-      <a class="forgot-password" id="forgotPasswordLink" href="#" data-i18n="forgotPassword">Forgot Password?</a>
+      <a class="forgot-password" id="forgotPasswordLink" href="#" data-i18n="forgotPassword">忘记密码？</a>
     </div>
 
-    <div class="actions" style="margin-top:14px;">
-      <button class="btn-accent" id="emailLoginBtn" style="flex:1;" data-i18n="login">登录</button>
-      <button class="btn-ghost" id="emailRegisterBtn" style="flex:1;" data-i18n="register">注册新账号</button>
+    <div class="actions">
+      <button class="btn-accent" id="emailLoginBtn" data-i18n="login">登录</button>
+      <button class="btn-ghost" id="emailRegisterBtn" data-i18n="register">创建账号</button>
+    </div>
+
+    <div class="continue-divider"><span data-i18n="orContinueWith">或使用以下方式继续</span></div>
+
+    <div class="social-stack">
+      <button class="social-btn" id="googleSignInBtn">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.9c1.7-1.57 2.7-3.87 2.7-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.95 10.7A5.4 5.4 0 0 1 3.67 9c0-.59.1-1.17.28-1.7V4.97H.98A9 9 0 0 0 0 9c0 1.45.35 2.83.98 4.03l2.97-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 0 0 .98 4.97l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/></svg>
+        <span data-i18n="googleLogin">使用 Google 登录</span>
+      </button>
     </div>
 
     <div id="authError" class="auth-error"></div>
@@ -778,7 +1419,7 @@ let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "cn";
 const I18N = {
   cn: {
     appTitle:"车贷管家", authSub:"登录后，手机和电脑的数据会自动同步", googleLogin:"使用 Google 登录", or:"或", email:"邮箱", password:"密码",
-    keepSigned:"保持登录资料", forgotPassword:"忘记密码？", login:"登录", register:"注册新账号", loanOverview:"贷款总览", paidOffLabel:"已还清",
+    keepSigned:"保持登录资料", forgotPassword:"忘记密码？", login:"登录", register:"创建账号", orContinueWith:"或使用以下方式继续", facebookLogin:"使用 Facebook 登录", loanOverview:"贷款总览", paidOffLabel:"已还清",
     totalLoan:"贷款总额", amountPaid:"已还金额", remainingBalance:"剩余欠款", paymentCount:"还款次数", estimatedRemaining:"按目前还款速度，预计还剩",
     vehicleLoanSettings:"车辆与贷款设置", plateNumber:"车牌号码", plateExample:"例如 WXX 1234", totalLoanRM:"车贷总额 (RM)", amountExample80k:"例如 80000",
     saveSettings:"保存设置", clearPlate:"清除车牌信息", account:"账号", logout:"退出登录", recordPayment:"记录一笔还款", paymentAmount:"还款金额 (RM)",
@@ -796,7 +1437,7 @@ const I18N = {
   },
   en: {
     appTitle:"Car Loan Manager", authSub:"Sign in to sync your data across your phone and computer", googleLogin:"Continue with Google", or:"OR", email:"Email", password:"Password",
-    keepSigned:"Keep Me Signed In", forgotPassword:"Forgot Password?", login:"Sign In", register:"Create Account", loanOverview:"Loan Overview", paidOffLabel:"Paid",
+    keepSigned:"Keep Me Signed In", forgotPassword:"Forgot Password?", login:"Sign In", register:"Create Account", orContinueWith:"Or continue with", facebookLogin:"Continue with Facebook", loanOverview:"Loan Overview", paidOffLabel:"Paid",
     totalLoan:"Total Loan", amountPaid:"Amount Paid", remainingBalance:"Remaining Balance", paymentCount:"Payments", estimatedRemaining:"Estimated time remaining at current payment rate",
     vehicleLoanSettings:"Vehicle & Loan Settings", plateNumber:"Plate Number", plateExample:"e.g. WXX 1234", totalLoanRM:"Total Loan (RM)", amountExample80k:"e.g. 80000",
     saveSettings:"Save Settings", clearPlate:"Clear Vehicle Info", account:"Account", logout:"Sign Out", recordPayment:"Record a Payment", paymentAmount:"Payment Amount (RM)",
