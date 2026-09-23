@@ -1530,6 +1530,30 @@ $("accountToggle").addEventListener("click", () => {
   $("accountBody").classList.toggle("open");
 });
 
+
+if($("facebookSignInBtn")){
+  $("facebookSignInBtn").addEventListener("click", async () => {
+    showAuthError("");
+    try{
+      const provider = new firebase.auth.FacebookAuthProvider();
+      provider.addScope("email");
+      await auth.signInWithPopup(provider);
+    }catch(e){
+      const code = String((e && e.code) ?? "").toLowerCase();
+      const msg = String((e && e.message) ?? "").toLowerCase();
+      if(code.includes("popup-closed-by-user") ||
+         code.includes("cancelled-popup-request") ||
+         code.includes("user-cancelled") ||
+         msg.includes("cancelled") ||
+         msg.includes("canceled")){
+        showAuthError("");
+        return;
+      }
+      showAuthError(translateAuthError(e));
+    }
+  });
+}
+
 auth.onAuthStateChanged((user) => {
   if(user){
     document.body.classList.add("authed");
