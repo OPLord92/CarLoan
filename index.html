@@ -1010,8 +1010,204 @@ body.authed .app-window{
 }
 </style>
 
+<style id="carloan-v2">
+/* ===== v2: multi-vehicle, settings sheet, legal return flow ===== */
+.hidden{ display:none !important; }
+
+/* Hide the login screen until Firebase has restored (or not) the saved session,
+   so "Keep me signed in" opens straight on the main page without a login flash. */
+body.auth-pending .auth-screen{ visibility:hidden; }
+html.returning-settings body{ visibility:hidden !important; }
+
+.titlebar #settingsBtn svg{ width:16px; height:16px; }
+
+.vehicle-bar{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+.v-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:7px 12px; border-radius:999px;
+  border:1px solid var(--border); background:var(--chip-bg); color:var(--text-primary);
+  font:inherit; font-size:13px; cursor:pointer; max-width:100%;
+}
+.v-chip:hover{ background:var(--ghost-hover); }
+.v-chip.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.v-chip.add{ border-style:dashed; color:var(--accent); background:transparent; }
+.v-chip .v-plate{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.all-note{ font-size:12px; color:var(--text-secondary); margin:-4px 0 12px; }
+.all-note:empty{ display:none; }
+
+/* Segmented control */
+.seg{ display:inline-flex; border:1px solid var(--input-border); border-radius:8px; overflow:hidden; flex:none; }
+.seg button{
+  border:0; background:transparent; color:var(--text-primary);
+  padding:7px 14px; font:inherit; font-size:13px; cursor:pointer; min-width:64px;
+}
+.seg button.active{ background:var(--accent); color:#fff; }
+.field .seg{ display:flex; }
+.field .seg button{ flex:1; }
+
+/* Settings sheet */
+.settings-overlay{
+  position:fixed; inset:0; z-index:900; background:rgba(0,0,0,.45);
+  display:flex; align-items:center; justify-content:center;
+  padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));
+}
+.settings-sheet{
+  width:100%; max-width:420px; max-height:100%; overflow-y:auto; overscroll-behavior:contain;
+  border-radius:14px; padding:16px 16px 20px;
+  background:var(--modal-bg); color:var(--text-primary);
+  border:1px solid var(--border); box-shadow:0 20px 60px rgba(0,0,0,.28);
+}
+.settings-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+.settings-title{ font-size:18px; font-weight:600; }
+.settings-close{ background:none; border:none; color:inherit; font-size:26px; line-height:1; cursor:pointer; padding:0 4px; opacity:.7; }
+.settings-close:hover{ opacity:1; }
+.settings-section{ margin-top:18px; }
+.settings-section h3{
+  margin:0 0 4px; font-size:11px; font-weight:600; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--text-secondary);
+}
+.settings-row{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:8px 0; border-bottom:1px solid var(--border); min-height:44px;
+}
+.settings-row .lbl{ font-size:14px; }
+.settings-row .sub{ font-size:13px; color:var(--text-secondary); text-align:right; word-break:break-all; }
+.settings-hint{ margin:6px 0 0; font-size:12px; line-height:1.4; color:var(--text-secondary); }
+.settings-select, .settings-row input[type=time], .settings-row input[type=number]{
+  max-width:170px; font:inherit; font-size:14px; padding:6px 8px; border-radius:6px;
+  background:var(--input-bg); color:var(--text-primary); border:1px solid var(--input-border);
+}
+.settings-action{
+  display:block; width:100%; margin-top:10px; padding:11px 12px;
+  font:inherit; font-size:14px; text-align:center; cursor:pointer; border-radius:10px;
+  background:transparent; color:var(--text-primary); border:1px solid var(--ghost-border);
+}
+.settings-action:hover{ background:var(--ghost-hover); }
+.settings-action.danger{ border-color:var(--danger); color:var(--danger); }
+.settings-action.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+.pw-form{ margin-top:10px; }
+.pw-form input{
+  display:block; width:100%; margin-top:8px; padding:10px 12px; font:inherit; font-size:14px;
+  border-radius:8px; background:var(--input-bg); color:var(--text-primary); border:1px solid var(--input-border);
+}
+.pw-form .pw-buttons{ display:flex; gap:10px; margin-top:10px; }
+.pw-form .pw-buttons button{ flex:1; margin-top:0; }
+.about-box{ margin-top:6px; font-size:13px; line-height:1.55; color:var(--text-secondary); }
+.about-box .about-name{ font-weight:600; color:var(--text-primary); }
+.account-note{ margin-top:10px; font-size:12px; color:var(--text-secondary); line-height:1.45; }
+#accountStatus{ margin-top:8px; font-size:13px; }
+.settings-status{
+  position:sticky; bottom:-20px; margin:16px -16px -20px; padding:11px 16px;
+  font-size:13px; line-height:1.4; background:var(--modal-bg);
+  border-top:1px solid var(--border); border-radius:0 0 14px 14px;
+}
+.settings-status:empty{ display:none; }
+.settings-status.err{ color:var(--danger); }
+
+/* Switch */
+.switch{ position:relative; display:inline-block; width:44px; height:26px; flex:none; }
+.switch input{ opacity:0; width:0; height:0; position:absolute; }
+.switch .slider{ position:absolute; inset:0; border-radius:26px; background:rgba(128,128,128,.4); cursor:pointer; transition:background .15s; }
+.switch .slider:before{ content:""; position:absolute; left:3px; top:3px; width:20px; height:20px; border-radius:50%; background:#fff; transition:transform .15s; }
+.switch input:checked + .slider{ background:var(--accent); }
+.switch input:checked + .slider:before{ transform:translateX(18px); }
+
+/* Confirm / password prompt always above the settings sheet */
+.modal-overlay{ z-index:2000 !important; }
+.toast{ z-index:2100; }
+.modal-box input.prompt-input{
+  width:100%; margin:0 0 14px; padding:10px 12px; font:inherit; font-size:14px; border-radius:8px;
+  background:var(--input-bg); color:var(--text-primary); border:1px solid var(--input-border);
+}
+.actions button.hidden{ display:none !important; }
+
+/* ===== Settings: phone = narrow stacked sheet (default). Windows = wide two-pane window. ===== */
+.settings-nav{ display:none; }
+.panel-head{ display:none; }
+.settings-main{ display:block; }
+.settings-panel{ display:block; }
+.settings-close.round{ display:none; }
+
+@media (min-width: 720px){
+  html:not(.is-native) .settings-overlay{ padding:28px; }
+  html:not(.is-native) .settings-sheet{
+    display:grid; grid-template-columns: 260px minmax(0,1fr);
+    max-width:1040px; width:100%; height:min(700px, 100%); max-height:100%;
+    padding:0; overflow:hidden; border-radius:18px;
+  }
+  /* sidebar */
+  html:not(.is-native) .settings-nav{
+    display:flex; flex-direction:column; gap:6px;
+    padding:22px 14px 16px; overflow-y:auto;
+    background: rgba(0,0,0,.035); border-right:1px solid var(--border);
+  }
+  body.dark .settings-nav{ background: rgba(0,0,0,.28); }
+  html:not(.is-native) .nav-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; padding:0 8px 14px; }
+  html:not(.is-native) .nav-title{ font-size:22px; font-weight:700; letter-spacing:.2px; }
+  html:not(.is-native) .nav-sub{ margin-top:6px; font-size:13px; line-height:1.4; color:var(--text-secondary); }
+  html:not(.is-native) .settings-close.round{
+    display:flex; align-items:center; justify-content:center; flex:none;
+    width:34px; height:34px; padding:0; border-radius:50%; font-size:20px; opacity:1;
+    border:1px solid var(--border); background:var(--ghost-bg);
+  }
+  html:not(.is-native) .settings-close.round:hover{ background:var(--ghost-hover); }
+  html:not(.is-native) .nav-item{
+    display:flex; align-items:center; gap:12px; width:100%;
+    padding:11px 12px; border:0; border-radius:10px; cursor:pointer;
+    background:transparent; color:var(--text-secondary);
+    font:inherit; font-size:15px; font-weight:600; text-align:left;
+  }
+  html:not(.is-native) .nav-item svg{ width:17px; height:17px; flex:none; }
+  html:not(.is-native) .nav-item:hover{ background:var(--ghost-hover); color:var(--text-primary); }
+  html:not(.is-native) .nav-item.active{ background:var(--accent-soft); color:var(--accent); }
+  html:not(.is-native) .nav-item.hidden{ display:none !important; }
+  html:not(.is-native) .nav-foot{ margin-top:auto; padding:14px 10px 0; font-size:12px; color:var(--text-secondary); }
+
+  /* content */
+  html:not(.is-native) .settings-main{ overflow-y:auto; overscroll-behavior:contain; padding:26px 30px 0; position:relative; }
+  html:not(.is-native) .settings-main > .settings-head{ display:none; }
+  html:not(.is-native) .settings-panel{ display:none; padding-bottom:28px; }
+  html:not(.is-native) .settings-panel.active{ display:block; }
+  html:not(.is-native) .panel-head{ display:block; margin-bottom:16px; }
+  html:not(.is-native) .panel-head h2{ margin:0; font-size:22px; font-weight:700; }
+  html:not(.is-native) .panel-head p{ margin:6px 0 0; font-size:14px; color:var(--text-secondary); }
+  html:not(.is-native) .settings-section{
+    margin:0 0 16px; padding:16px 18px 18px;
+    border:1px solid var(--border); border-radius:14px; background:var(--surface-strong);
+  }
+  html:not(.is-native) .settings-section h3{ margin-bottom:6px; font-size:12px; letter-spacing:.09em; }
+  html:not(.is-native) .settings-row:last-of-type{ border-bottom:0; }
+  html:not(.is-native) .settings-row .lbl{ font-weight:600; font-size:15px; }
+  html:not(.is-native) .settings-row .sub{ font-size:14px; }
+  html:not(.is-native) .settings-action{ padding:13px 14px; font-weight:600; font-size:15px; border-radius:10px; }
+  html:not(.is-native) .settings-section.danger-zone{ border-color:rgba(196,43,28,.35); background:rgba(196,43,28,.05); }
+  body.dark .settings-section.danger-zone{ border-color:rgba(255,153,164,.30); background:rgba(255,100,120,.06); }
+  html:not(.is-native) .danger-zone h3{ color:var(--danger); }
+  html:not(.is-native) .danger-zone .account-note{ margin-top:0; margin-bottom:4px; }
+  html:not(.is-native) .settings-status{
+    position:sticky; bottom:0; margin:0 -30px; padding:12px 30px; border-radius:0;
+  }
+}
+/* danger-zone heading on phone too */
+.settings-section.danger-zone h3{ color:var(--danger); }
+
+/* Dropdown lists (currency, reminder day) and the time picker: readable in dark mode.
+   Without this, the native list opened white with light grey text. */
+body.dark{ color-scheme: dark; }
+body:not(.dark){ color-scheme: light; }
+.settings-select option,
+.settings-select optgroup{
+  background-color: var(--modal-bg);
+  color: var(--text-primary);
+}
+
+</style>
+<script>
+/* Returning from Privacy Policy / Terms: keep the page hidden until the saved sign-in is restored (no login-screen flash). */
+(function(){try{var p=new URLSearchParams(window.location.search);if(p.get('settings')==='about'){var r=document.documentElement;r.classList.add('returning-settings');r.style.background=(localStorage.getItem('carLoanTheme')==='dark')?'#1D1D1D':'#F3F3F3';}}catch(e){}})();
+</script>
 </head>
-<body>
+<body class="auth-pending">
 
 
 <div class="auth-screen" id="authScreen">
@@ -1079,27 +1275,32 @@ body.authed .app-window{
 <div class="app-window">
   <div class="titlebar">
     <div class="icon">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M4 16h16M4 16l1.5-5.5A2 2 0 0 1 7.4 9h9.2a2 2 0 0 1 1.9 1.5L20 16M4 16v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h10v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="16.2" r="1.3" fill="white"/><circle cx="16.5" cy="16.2" r="1.3" fill="white"/></svg>
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 16h16M4 16l1.5-5.5A2 2 0 0 1 7.4 9h9.2a2 2 0 0 1 1.9 1.5L20 16M4 16v3a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h10v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="7.5" cy="13" r=".9" fill="white"/><circle cx="16.5" cy="13" r=".9" fill="white"/></svg>
     </div>
     <h1 data-i18n="appTitle">车贷管家</h1>
     <div class="plate-chip" id="plateChip">未设置车牌</div>
     <button class="language-toggle" id="mainLanguageBtn" type="button">EN</button>
-    <button class="theme-toggle" id="themeToggleBtn" title="切换暗色模式">
+    <button class="theme-toggle" id="themeToggleBtn" title="切换暗色模式" type="button">
       <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+    <button class="theme-toggle" id="settingsBtn" type="button" title="设置" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
     </button>
   </div>
 
   <div class="content">
 
+    <div class="vehicle-bar" id="vehicleBar"></div>
+
     <div class="card">
       <h2 data-i18n="loanOverview">贷款总览</h2>
+      <div class="all-note" id="allNote"></div>
       <div class="overview-top">
         <div class="ring-wrap">
           <svg viewBox="0 0 112 112">
             <circle class="ring-track" cx="56" cy="56" r="46"></circle>
-            <circle class="ring-progress" id="ring" cx="56" cy="56" r="46"
-              stroke-dasharray="289" stroke-dashoffset="289"></circle>
+            <circle class="ring-progress" id="ring" cx="56" cy="56" r="46" stroke-dasharray="289" stroke-dashoffset="289"></circle>
           </svg>
           <div class="ring-label">
             <div class="pct" id="pctText">0%</div>
@@ -1133,40 +1334,34 @@ body.authed .app-window{
 
     <div class="card">
       <div class="settings-toggle" id="settingsToggle">
-        <h2 style="margin:0;" data-i18n="vehicleLoanSettings">车辆与贷款设置</h2>
+        <h2 style="margin:0;" id="vehCardTitle">车辆与贷款设置</h2>
         <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </div>
       <div class="settings-body" id="settingsBody">
+        <div class="field">
+          <label data-i18n="vehicleType">车辆类型</label>
+          <div class="seg" id="vehTypeSeg">
+            <button type="button" data-type="car">🚗 <span data-i18n="typeCar">汽车</span></button>
+            <button type="button" data-type="motorcycle">🏍️ <span data-i18n="typeMoto">摩托车</span></button>
+          </div>
+        </div>
         <div class="row2">
           <div class="field">
             <label for="plateInput" data-i18n="plateNumber">车牌号码</label>
             <input id="plateInput" type="text" placeholder="例如 WXX 1234" data-i18n-placeholder="plateExample">
           </div>
           <div class="field">
-            <label for="totalInput" data-i18n="totalLoanRM">车贷总额 (RM)</label>
+            <label for="totalInput" id="totalLabel" data-i18n="totalLoanCur">车贷总额</label>
             <input id="totalInput" type="number" min="0" step="0.01" placeholder="例如 80000" data-i18n-placeholder="amountExample80k">
           </div>
         </div>
         <div class="actions">
           <button class="btn-accent" id="saveSettingsBtn" data-i18n="saveSettings">保存设置</button>
-          <button class="btn-ghost" id="clearSettingsBtn" data-i18n="clearPlate">清除车牌信息</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="settings-toggle" id="accountToggle">
-        <h2 style="margin:0;" data-i18n="account">账号</h2>
-        <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-      <div class="settings-body" id="accountBody">
-        <div id="accountEmailText" class="info-box" style="margin-bottom:14px;">未登录</div>
-        <div class="actions">
-          <button class="btn-ghost" id="logoutBtn" data-i18n="logout">退出登录</button>
+          <button class="btn-ghost" id="clearSettingsBtn" data-i18n="clearPlate">清除车辆信息</button>
+          <button class="btn-ghost hidden" id="deleteVehicleBtn" data-i18n="deleteVehicle">删除此车辆</button>
+          <button class="btn-ghost hidden" id="cancelAddVehicleBtn" data-i18n="cancel">取消</button>
         </div>
       </div>
     </div>
@@ -1175,7 +1370,7 @@ body.authed .app-window{
       <h2 id="payCardTitle" data-i18n="recordPayment">记录一笔还款</h2>
       <div class="row2">
         <div class="field">
-          <label for="payAmount" data-i18n="paymentAmount">还款金额 (RM)</label>
+          <label for="payAmount" id="payAmountLabel" data-i18n="paymentAmountCur">还款金额</label>
           <input id="payAmount" type="number" min="0" step="0.01" placeholder="例如 1200" data-i18n-placeholder="amountExample1200">
         </div>
         <div class="field">
@@ -1203,10 +1398,171 @@ body.authed .app-window{
   </div>
 </div>
 
+<!-- ============ SETTINGS SHEET ============ -->
+<!-- Phone: one narrow scrolling sheet.  Windows (wide window): sidebar + one panel at a time. -->
+<div class="settings-overlay hidden" id="settingsOverlay">
+  <div class="settings-sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+
+    <aside class="settings-nav">
+      <div class="nav-head">
+        <div>
+          <div class="nav-title" data-i18n="settings">设置</div>
+          <div class="nav-sub" data-i18n="settingsSub">管理您的账户、偏好设置、数据与隐私。</div>
+        </div>
+        <button type="button" class="settings-close round" id="settingsCloseBtn2" aria-label="Close">&times;</button>
+      </div>
+      <button type="button" class="nav-item active" data-tab="account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span data-i18n="secAccount">账户</span>
+      </button>
+      <button type="button" class="nav-item" data-tab="prefs">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>
+        <span data-i18n="secPrefs">偏好设置</span>
+      </button>
+      <button type="button" class="nav-item" data-tab="data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        <span data-i18n="secData">我的数据</span>
+      </button>
+      <button type="button" class="nav-item" data-tab="support" id="navSupport">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        <span data-i18n="secSupport">支持</span>
+      </button>
+      <button type="button" class="nav-item" data-tab="about">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <span data-i18n="secAbout">关于与法律</span>
+      </button>
+      <div class="nav-foot" data-i18n="appTitle">车贷管家</div>
+    </aside>
+
+    <div class="settings-main" id="settingsMain">
+      <div class="settings-head">
+        <div class="settings-title" id="settingsTitle" data-i18n="settings">设置</div>
+        <button type="button" class="settings-close" id="settingsCloseBtn" aria-label="Close">&times;</button>
+      </div>
+
+      <!-- ACCOUNT -->
+      <div class="settings-panel active" data-panel="account">
+        <div class="panel-head"><h2 data-i18n="secAccount">账户</h2><p data-i18n="accountSub">管理登录信息和账户安全。</p></div>
+        <div class="settings-section">
+          <h3 data-i18n="accountDetails">账户详情</h3>
+          <div class="settings-row">
+            <div class="lbl" data-i18n="signedInAs">当前账户</div>
+            <div class="sub" id="acctEmail">—</div>
+          </div>
+          <div class="settings-row">
+            <div class="lbl" data-i18n="signInMethod">登录方式</div>
+            <div class="sub" id="acctMethod">—</div>
+          </div>
+          <button type="button" class="settings-action hidden" id="changePwBtn" data-i18n="changePassword">修改密码</button>
+          <div class="pw-form hidden" id="pwForm">
+            <input type="password" id="pwCurrent" autocomplete="current-password" data-i18n-ph="currentPassword" placeholder="当前密码">
+            <input type="password" id="pwNew" autocomplete="new-password" data-i18n-ph="newPassword" placeholder="新密码（至少 6 位）">
+            <input type="password" id="pwConfirm" autocomplete="new-password" data-i18n-ph="confirmPassword" placeholder="确认新密码">
+            <div class="pw-buttons">
+              <button type="button" class="settings-action" id="pwCancelBtn" data-i18n="cancel">取消</button>
+              <button type="button" class="settings-action primary" id="pwSaveBtn" data-i18n="savePassword">更新密码</button>
+            </div>
+          </div>
+          <button type="button" class="settings-action" id="logoutBtn" data-i18n="logout">退出登录</button>
+        </div>
+        <div class="settings-section danger-zone">
+          <h3 data-i18n="dangerZone">危险操作</h3>
+          <div class="account-note" data-i18n="deleteNote">删除账户会永久删除您的车贷管家账户、车辆资料和还款记录。</div>
+          <button type="button" class="settings-action danger" id="deleteAccountBtn" data-i18n="deleteAccount">删除账户</button>
+          <div id="accountStatus"></div>
+        </div>
+      </div>
+
+      <!-- PREFERENCES -->
+      <div class="settings-panel" data-panel="prefs">
+        <div class="panel-head"><h2 data-i18n="secPrefs">偏好设置</h2><p data-i18n="prefsSub">语言、主题、货币和提醒。</p></div>
+        <div class="settings-section">
+          <h3 data-i18n="secPrefs">偏好设置</h3>
+          <div class="settings-row">
+            <div class="lbl" data-i18n="language">语言</div>
+            <div class="seg" id="langSeg">
+              <button type="button" data-lang="en">EN</button>
+              <button type="button" data-lang="cn">中文</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="lbl" data-i18n="theme">主题</div>
+            <div class="seg" id="themeSeg">
+              <button type="button" data-theme="light" data-i18n="themeLight">浅色</button>
+              <button type="button" data-theme="dark" data-i18n="themeDark">深色</button>
+            </div>
+          </div>
+          <div class="settings-row">
+            <div class="lbl" data-i18n="currency">货币</div>
+            <select id="currencySelect" class="settings-select"></select>
+          </div>
+          <div class="settings-hint" data-i18n="currencyNote">只会改变显示的货币符号，金额不会换算。</div>
+          <div class="settings-row hidden" id="reminderRow">
+            <div class="lbl" data-i18n="monthlyReminder">每月还款提醒</div>
+            <label class="switch"><input type="checkbox" id="reminderToggle"><span class="slider"></span></label>
+          </div>
+          <div class="settings-row hidden" id="reminderDayRow">
+            <div class="lbl" data-i18n="reminderDay">每月提醒日期</div>
+            <select id="reminderDay" class="settings-select"></select>
+          </div>
+          <div class="settings-row hidden" id="reminderTimeRow">
+            <div class="lbl" data-i18n="reminderTime">提醒时间</div>
+            <input type="time" id="reminderTime" value="09:00">
+          </div>
+        </div>
+      </div>
+
+      <!-- DATA -->
+      <div class="settings-panel" data-panel="data">
+        <div class="panel-head"><h2 data-i18n="secData">我的数据</h2><p data-i18n="dataSub">导出或清除您的数据。</p></div>
+        <div class="settings-section">
+          <h3 data-i18n="secData">我的数据</h3>
+          <button type="button" class="settings-action" id="exportBtn" data-i18n="exportCsv">导出数据 (CSV)</button>
+          <button type="button" class="settings-action danger" id="clearPayBtn" data-i18n="clearPayments">清除所有还款记录</button>
+        </div>
+      </div>
+
+      <!-- SUPPORT -->
+      <div class="settings-panel" data-panel="support" id="supportPanel">
+        <div class="panel-head"><h2 data-i18n="secSupport">支持</h2><p data-i18n="supportSub">联系开发者或为应用评分。</p></div>
+        <div class="settings-section">
+          <h3 data-i18n="secSupport">支持</h3>
+          <button type="button" class="settings-action hidden" id="feedbackBtn" data-i18n="sendFeedback">发送反馈</button>
+          <button type="button" class="settings-action hidden" id="rateBtn" data-i18n="rateApp">给车贷管家评分</button>
+        </div>
+      </div>
+
+      <!-- ABOUT & LEGAL -->
+      <div class="settings-panel" data-panel="about" id="settingsAboutSection">
+        <div class="panel-head"><h2 data-i18n="secAbout">关于与法律</h2><p data-i18n="aboutSub">应用信息和法律文件。</p></div>
+        <div class="settings-section">
+          <h3 data-i18n="aboutCard">关于</h3>
+          <div class="about-box">
+            <div class="about-name" data-i18n="appTitle">车贷管家</div>
+            <div data-i18n="aboutText">记录汽车和摩托车贷款还款进度的简单工具。</div>
+            <div id="aboutVersion"></div>
+            <div id="aboutDev"></div>
+            <div id="aboutContact"></div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3 data-i18n="legalCard">法律</h3>
+          <button type="button" class="settings-action" id="privacyPolicyBtn" data-i18n="privacyPolicy">隐私政策</button>
+          <button type="button" class="settings-action" id="termsBtn" data-i18n="terms">服务条款</button>
+        </div>
+      </div>
+
+      <div class="settings-status" id="settingsStatus" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM / PASSWORD PROMPT ============ -->
 <div class="modal-overlay" id="confirmOverlay">
   <div class="modal-box">
     <div class="modal-title" id="confirmTitle">确认操作</div>
     <div class="modal-message" id="confirmMessage"></div>
+    <input type="password" id="confirmInput" class="prompt-input hidden" autocomplete="current-password">
     <div class="modal-actions">
       <button class="btn-ghost" id="confirmCancelBtn" data-i18n="cancel">取消</button>
       <button class="btn-accent" id="confirmOkBtn" data-i18n="confirm">确认</button>
@@ -1221,8 +1577,7 @@ body.authed .app-window{
 <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
 <script>
 // ==================================================================
-// 把下面这几行换成你自己 Firebase 项目的配置
-// （Firebase 控制台 → 项目设置 → 常规 → 你的应用 → SDK 设置和配置）
+// 车贷管家 / Car Loan Manager — shared by Android (Capacitor) and Windows (Electron)
 // ==================================================================
 const firebaseConfig = {
   apiKey: "AIzaSyCMmGXhYMxtUpAPCJH0pfvlmCDyxvDYnqE",
@@ -1236,56 +1591,506 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
+// ---------- EDIT THESE before you publish ----------
+const APP_VERSION = '1.0';          // keep in sync with versionName in android/app/build.gradle
+const SUPPORT_EMAIL = 'wellchin42@gmail.com';           // your support email (empty = "Send feedback" stays hidden)
+const DEVELOPER_NAME = '';          // optional, shown under About
+const PLAY_STORE_ID = 'com.local.carloanmanager';   // must equal applicationId in android/app/build.gradle
+// ---------------------------------------------------
+
 const THEME_KEY = "carLoanTheme";
-let state = { plate: "", totalLoan: 0, payments: [], theme: localStorage.getItem(THEME_KEY) || null };
+const LANGUAGE_KEY = "carLoanLanguage";
+const CURRENCY_KEY = "carLoanCurrency";
+const VEHICLE_KEY = "carLoanSelectedVehicle";
+const REMEMBER_EMAIL_KEY = "carLoanRememberedEmail";
+const REMINDER_ON_KEY = "carLoanReminderOn";
+const REMINDER_DAY_KEY = "carLoanReminderDay";
+const REMINDER_TIME_KEY = "carLoanReminderTime";
+const REMINDER_ID = 2001;
+
+// Older versions stored the password in plain text on the device. Remove it.
+try{ localStorage.removeItem("carLoanRememberedPassword"); }catch(_e){}
 
 const $ = (id) => document.getElementById(id);
 
-// ================== EN / CN Language ==================
-const LANGUAGE_KEY = "carLoanLanguage";
-let currentLanguage = localStorage.getItem(LANGUAGE_KEY) || "cn";
+function isNative(){
+  return !!(window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform());
+}
+// Android keeps the narrow phone sheet; everything else (Windows) gets the wide two-pane settings.
+if(isNative()) document.documentElement.classList.add("is-native");
+function capPlugin(name){
+  return (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins[name]) || null;
+}
+function newId(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+// ================== Language ==================
+let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "cn";
 const I18N = {
-  cn: {
-    appTitle:"车贷管家", authSub:"登录后，手机和电脑的数据会自动同步", googleLogin:"使用 Google 登录", or:"或", email:"邮箱", password:"密码",
-    keepSigned:"保持登录资料", forgotPassword:"忘记密码？", login:"登录", register:"创建账号", orContinueWith:"或使用以下方式继续", facebookLogin:"使用 Facebook 登录", loanOverview:"贷款总览", paidOffLabel:"已还清",
-    totalLoan:"贷款总额", amountPaid:"已还金额", remainingBalance:"剩余欠款", paymentCount:"还款次数", estimatedRemaining:"按目前还款速度，预计还剩",
-    vehicleLoanSettings:"车辆与贷款设置", plateNumber:"车牌号码", plateExample:"例如 WXX 1234", totalLoanRM:"车贷总额 (RM)", amountExample80k:"例如 80000",
-    saveSettings:"保存设置", clearPlate:"清除车牌信息", account:"账号", logout:"退出登录", recordPayment:"记录一笔还款", paymentAmount:"还款金额 (RM)",
-    amountExample1200:"例如 1200", date:"日期", noteOptional:"备注（可选）", monthlyPaymentExample:"例如 每月供款", addPayment:"添加还款记录", cancelEdit:"取消编辑",
-    paymentHistory:"还款记录", noPayments:"还没有还款记录，添加第一笔吧。", cancel:"取消", confirm:"确认", unsetPlate:"未设置车牌", loggedIn:"已登录", notLoggedIn:"未登录",
-    edit:"修改", delete:"删除", fullyPaid:"🎉 已还清", noPaymentYet:"还没有还款记录", insufficientRate:"还款速度不足以还清", year:"年", month:"个月",
-    avgMonthlyTitle:"按平均每月还 {amount} 计算", confirmAction:"确认操作", showPassword:"显示密码", hidePassword:"隐藏密码",
-    invalidEmail:"邮箱格式不对", userNotFound:"这个邮箱还没有注册", wrongPassword:"密码不对", invalidCredential:"邮箱或密码不对", emailInUse:"这个邮箱已经注册过了，直接登录就好",
-    weakPassword:"密码至少要 6 位", networkFailed:"网络连接失败，请检查网络", loginCancelled:"登录已取消", tooMany:"尝试次数太多，请稍后再试", missingEmail:"请输入邮箱", userDisabled:"这个账号已被停用",
-    loginFailed:"登录失败，请重试", enterEmailReset:"请先输入邮箱，然后再点击忘记密码？", resetSent:"密码重置邮件已发送到 {email}，请检查邮箱。", enterEmailPass:"请输入邮箱和密码",
-    noGoogleToken:"没有拿到 Google 登录令牌", logoutConfirm:"确定要退出登录吗？", logoutTitle:"退出登录", cloudFail:"云端同步失败 {hint}，请检查 Firestore 设置或网络", saveFail:"保存失败 {hint}，请检查 Firestore 设置或网络",
-    deleted:"已删除该记录", editPayment:"修改还款记录", saveChanges:"保存修改", enterPlate:"请输入车牌号码", invalidTotal:"请输入有效的贷款总额", settingsSaved:"设置已保存",
-    noSavedPlate:"目前没有已保存的车牌信息", clearConfirm:"确定要清除车牌号码和贷款总额吗？还款记录不会被删除。", clearPlateTitle:"清除车牌信息", plateCleared:"车牌信息已清除",
-    invalidPayment:"请输入有效的还款金额", futureDate:"日期不能选择未来的日子", paymentUpdated:"还款记录已更新", paymentAdded:"已添加还款记录"
-  },
-  en: {
-    appTitle:"Car Loan Manager", authSub:"Sign in to sync your data across your phone and computer", googleLogin:"Continue with Google", or:"OR", email:"Email", password:"Password",
-    keepSigned:"Keep Me Signed In", forgotPassword:"Forgot Password?", login:"Sign In", register:"Create Account", orContinueWith:"Or continue with", facebookLogin:"Continue with Facebook", loanOverview:"Loan Overview", paidOffLabel:"Paid",
-    totalLoan:"Total Loan", amountPaid:"Amount Paid", remainingBalance:"Remaining Balance", paymentCount:"Payments", estimatedRemaining:"Estimated time remaining at current payment rate",
-    vehicleLoanSettings:"Vehicle & Loan Settings", plateNumber:"Plate Number", plateExample:"e.g. WXX 1234", totalLoanRM:"Total Loan (RM)", amountExample80k:"e.g. 80000",
-    saveSettings:"Save Settings", clearPlate:"Clear Vehicle Info", account:"Account", logout:"Sign Out", recordPayment:"Record a Payment", paymentAmount:"Payment Amount (RM)",
-    amountExample1200:"e.g. 1200", date:"Date", noteOptional:"Note (optional)", monthlyPaymentExample:"e.g. Monthly installment", addPayment:"Add Payment", cancelEdit:"Cancel Edit",
-    paymentHistory:"Payment History", noPayments:"No payment records yet. Add your first payment.", cancel:"Cancel", confirm:"Confirm", unsetPlate:"Plate not set", loggedIn:"Signed in", notLoggedIn:"Not signed in",
-    edit:"Edit", delete:"Delete", fullyPaid:"🎉 Fully paid", noPaymentYet:"No payment records yet", insufficientRate:"Payment rate is insufficient", year:"year", month:"month",
-    avgMonthlyTitle:"Based on an average monthly payment of {amount}", confirmAction:"Confirm Action", showPassword:"Show password", hidePassword:"Hide password",
-    invalidEmail:"Invalid email address", userNotFound:"No account is registered with this email", wrongPassword:"Incorrect password", invalidCredential:"Incorrect email or password", emailInUse:"This email is already registered. Please sign in.",
-    weakPassword:"Password must be at least 6 characters", networkFailed:"Network connection failed. Please check your connection.", loginCancelled:"Sign-in was cancelled", tooMany:"Too many attempts. Please try again later.", missingEmail:"Please enter your email", userDisabled:"This account has been disabled",
-    loginFailed:"Sign-in failed. Please try again.", enterEmailReset:"Enter your email first, then tap Forgot Password?", resetSent:"Password reset email sent to {email}. Please check your inbox.", enterEmailPass:"Please enter your email and password",
-    noGoogleToken:"Google sign-in token was not received", logoutConfirm:"Are you sure you want to sign out?", logoutTitle:"Sign Out", cloudFail:"Cloud sync failed {hint}. Check Firestore settings or your network.", saveFail:"Save failed {hint}. Check Firestore settings or your network.",
-    deleted:"Payment record deleted", editPayment:"Edit Payment", saveChanges:"Save Changes", enterPlate:"Please enter the plate number", invalidTotal:"Please enter a valid total loan amount", settingsSaved:"Settings saved",
-    noSavedPlate:"There is no saved vehicle information", clearConfirm:"Clear the plate number and total loan amount? Payment records will not be deleted.", clearPlateTitle:"Clear Vehicle Info", plateCleared:"Vehicle information cleared",
-    invalidPayment:"Please enter a valid payment amount", futureDate:"The date cannot be in the future", paymentUpdated:"Payment record updated", paymentAdded:"Payment record added"
-  }
+ "cn": {
+  "appTitle": "车贷管家",
+  "authSub": "登录后，手机和电脑的数据会自动同步",
+  "googleLogin": "使用 Google 登录",
+  "or": "或",
+  "email": "邮箱",
+  "password": "密码",
+  "keepSigned": "保持登录",
+  "forgotPassword": "忘记密码？",
+  "login": "登录",
+  "register": "创建账号",
+  "orContinueWith": "或使用以下方式继续",
+  "facebookLogin": "使用 Facebook 登录",
+  "loanOverview": "贷款总览",
+  "paidOffLabel": "已还清",
+  "totalLoan": "贷款总额",
+  "amountPaid": "已还金额",
+  "remainingBalance": "剩余欠款",
+  "paymentCount": "还款次数",
+  "estimatedRemaining": "按目前还款速度，预计还剩",
+  "vehicleLoanSettings": "车辆与贷款设置",
+  "plateNumber": "车牌号码",
+  "plateExample": "例如 WXX 1234",
+  "totalLoanRM": "车贷总额 (RM)",
+  "amountExample80k": "例如 80000",
+  "saveSettings": "保存设置",
+  "clearPlate": "清除车辆信息",
+  "account": "账号",
+  "logout": "退出登录",
+  "recordPayment": "记录一笔还款",
+  "paymentAmount": "还款金额 (RM)",
+  "amountExample1200": "例如 1200",
+  "date": "日期",
+  "noteOptional": "备注（可选）",
+  "monthlyPaymentExample": "例如 每月供款",
+  "addPayment": "添加还款记录",
+  "cancelEdit": "取消编辑",
+  "paymentHistory": "还款记录",
+  "noPayments": "还没有还款记录，添加第一笔吧。",
+  "cancel": "取消",
+  "confirm": "确认",
+  "unsetPlate": "未设置车牌",
+  "loggedIn": "已登录",
+  "notLoggedIn": "未登录",
+  "edit": "修改",
+  "delete": "删除",
+  "fullyPaid": "🎉 已还清",
+  "noPaymentYet": "还没有还款记录",
+  "insufficientRate": "还款速度不足以还清",
+  "year": "年",
+  "month": "个月",
+  "avgMonthlyTitle": "按平均每月还 {amount} 计算",
+  "confirmAction": "确认操作",
+  "showPassword": "显示密码",
+  "hidePassword": "隐藏密码",
+  "invalidEmail": "邮箱格式不对",
+  "userNotFound": "这个邮箱还没有注册",
+  "wrongPassword": "密码不对",
+  "invalidCredential": "邮箱或密码不对",
+  "emailInUse": "这个邮箱已经注册过了，直接登录就好",
+  "weakPassword": "密码至少要 6 位",
+  "networkFailed": "网络连接失败，请检查网络",
+  "loginCancelled": "登录已取消",
+  "tooMany": "尝试次数太多，请稍后再试",
+  "missingEmail": "请输入邮箱",
+  "userDisabled": "这个账号已被停用",
+  "loginFailed": "登录失败，请重试",
+  "enterEmailReset": "请先输入邮箱，然后再点击忘记密码？",
+  "resetSent": "密码重置邮件已发送到 {email}，请检查邮箱。",
+  "enterEmailPass": "请输入邮箱和密码",
+  "noGoogleToken": "没有拿到 Google 登录令牌",
+  "logoutConfirm": "确定要退出登录吗？",
+  "logoutTitle": "退出登录",
+  "cloudFail": "云端同步失败 {hint}，请检查 Firestore 设置或网络",
+  "saveFail": "保存失败 {hint}，请检查 Firestore 设置或网络",
+  "deleted": "已删除该记录",
+  "editPayment": "修改还款记录",
+  "saveChanges": "保存修改",
+  "enterPlate": "请输入车牌号码",
+  "invalidTotal": "请输入有效的贷款总额",
+  "settingsSaved": "设置已保存",
+  "noSavedPlate": "目前没有已保存的车辆信息",
+  "clearConfirm": "确定要清除车牌号码和贷款总额吗？还款记录不会被删除。",
+  "clearPlateTitle": "清除车辆信息",
+  "plateCleared": "车辆信息已清除",
+  "invalidPayment": "请输入有效的还款金额",
+  "futureDate": "日期不能选择未来的日子",
+  "paymentUpdated": "还款记录已更新",
+  "paymentAdded": "已添加还款记录",
+  "switchLight": "切换到亮色模式",
+  "switchDark": "切换到暗色模式",
+  "settings": "设置",
+  "secAccount": "账户",
+  "signedInAs": "当前账户",
+  "signInMethod": "登录方式",
+  "methodEmail": "邮箱和密码",
+  "changePassword": "修改密码",
+  "currentPassword": "当前密码",
+  "newPassword": "新密码（至少 6 位）",
+  "confirmPassword": "确认新密码",
+  "savePassword": "更新密码",
+  "pwFillAll": "请填写所有密码栏。",
+  "pwShort": "新密码至少需要 6 位。",
+  "pwMismatch": "两次输入的新密码不一致。",
+  "pwSame": "新密码不能和当前密码相同。",
+  "pwUpdated": "密码已更新。",
+  "pwWrong": "当前密码不正确。",
+  "pwTooMany": "尝试次数太多，请稍后再试。",
+  "pwFailed": "密码更新失败，请重试。",
+  "secPrefs": "偏好设置",
+  "language": "语言",
+  "theme": "主题",
+  "themeLight": "浅色",
+  "themeDark": "深色",
+  "currency": "货币",
+  "currencyNote": "只会改变显示的货币符号，金额不会换算。",
+  "monthlyReminder": "每月还款提醒",
+  "reminderDay": "每月提醒日期",
+  "reminderTime": "提醒时间",
+  "reminderChannel": "每月还款提醒",
+  "reminderBody": "该记录本月的车贷还款了。",
+  "reminderDenied": "通知权限已关闭，请在手机设置中为车贷管家开启通知。",
+  "reminderError": "无法设置提醒，请重试。",
+  "secData": "我的数据",
+  "exportCsv": "导出数据 (CSV)",
+  "exportEmpty": "目前没有可导出的数据。",
+  "exportUnavailable": "此设备无法导出文件。",
+  "exportFailed": "导出失败：",
+  "clearPayments": "清除所有还款记录",
+  "nothingToClear": "目前没有还款记录可清除。",
+  "clearPayConfirm1": "确定要清除所有车辆的全部还款记录吗？车辆资料会保留。",
+  "clearPayConfirm2": "最后确认：此操作无法撤销，确定清除吗？",
+  "clearPayDone": "所有还款记录已清除。",
+  "secSupport": "支持",
+  "sendFeedback": "发送反馈",
+  "rateApp": "给车贷管家评分",
+  "secAbout": "关于与法律",
+  "aboutText": "记录汽车和摩托车贷款还款进度的简单工具。",
+  "version": "版本",
+  "developer": "开发者",
+  "contact": "联系方式",
+  "privacyPolicy": "隐私政策",
+  "terms": "服务条款",
+  "deleteAccount": "删除账户",
+  "deleteNote": "删除账户会永久删除您的车贷管家账户、车辆资料和还款记录。",
+  "deletingAccount": "正在删除账户...",
+  "deleteSuccess": "账户已成功删除。",
+  "deleteFailed": "删除失败：",
+  "deleteConfirm1": "确定要永久删除您的车贷管家账户吗？这将删除所有车辆资料和还款记录，且无法恢复。",
+  "deleteConfirm2": "最后确认：永久删除账户和所有已保存资料？",
+  "enterPasswordDelete": "请输入您的密码以确认删除账户：",
+  "passwordRequired": "需要输入密码。",
+  "reauthUnknown": "无法确认此账户的登录方式。",
+  "vehicleType": "车辆类型",
+  "typeCar": "汽车",
+  "typeMoto": "摩托车",
+  "totalLoanCur": "车贷总额 ({cur})",
+  "paymentAmountCur": "还款金额 ({cur})",
+  "addVehicle": "添加车辆",
+  "addVehicleTitle": "添加车辆",
+  "vehicleAdded": "车辆已添加",
+  "deleteVehicle": "删除此车辆",
+  "deleteVehicleConfirm": "确定要删除车辆 {plate} 及其所有还款记录吗？此操作无法撤销。",
+  "vehicleDeleted": "车辆已删除",
+  "allVehiclesTotal": "全部 {n} 辆车合计剩余欠款：{amount}",
+  "settingsSub": "管理您的账户、偏好设置、数据与隐私。",
+  "accountSub": "管理登录信息和账户安全。",
+  "prefsSub": "语言、主题、货币和提醒。",
+  "dataSub": "导出或清除您的数据。",
+  "supportSub": "联系开发者或为应用评分。",
+  "aboutSub": "应用信息和法律文件。",
+  "accountDetails": "账户详情",
+  "dangerZone": "危险操作",
+  "aboutCard": "关于",
+  "legalCard": "法律"
+ },
+ "en": {
+  "appTitle": "Car Loan Manager",
+  "authSub": "Sign in to sync your data across your phone and computer",
+  "googleLogin": "Continue with Google",
+  "or": "OR",
+  "email": "Email",
+  "password": "Password",
+  "keepSigned": "Keep me signed in",
+  "forgotPassword": "Forgot Password?",
+  "login": "Sign In",
+  "register": "Create Account",
+  "orContinueWith": "Or continue with",
+  "facebookLogin": "Continue with Facebook",
+  "loanOverview": "Loan Overview",
+  "paidOffLabel": "Paid",
+  "totalLoan": "Total Loan",
+  "amountPaid": "Amount Paid",
+  "remainingBalance": "Remaining Balance",
+  "paymentCount": "Payments",
+  "estimatedRemaining": "Estimated time remaining at current payment rate",
+  "vehicleLoanSettings": "Vehicle & Loan Settings",
+  "plateNumber": "Plate Number",
+  "plateExample": "e.g. WXX 1234",
+  "totalLoanRM": "Total Loan (RM)",
+  "amountExample80k": "e.g. 80000",
+  "saveSettings": "Save Settings",
+  "clearPlate": "Clear Vehicle Info",
+  "account": "Account",
+  "logout": "Sign Out",
+  "recordPayment": "Record a Payment",
+  "paymentAmount": "Payment Amount (RM)",
+  "amountExample1200": "e.g. 1200",
+  "date": "Date",
+  "noteOptional": "Note (optional)",
+  "monthlyPaymentExample": "e.g. Monthly installment",
+  "addPayment": "Add Payment",
+  "cancelEdit": "Cancel Edit",
+  "paymentHistory": "Payment History",
+  "noPayments": "No payment records yet. Add your first payment.",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
+  "unsetPlate": "Plate not set",
+  "loggedIn": "Signed in",
+  "notLoggedIn": "Not signed in",
+  "edit": "Edit",
+  "delete": "Delete",
+  "fullyPaid": "🎉 Fully paid",
+  "noPaymentYet": "No payment records yet",
+  "insufficientRate": "Payment rate is insufficient",
+  "year": "year",
+  "month": "month",
+  "avgMonthlyTitle": "Based on an average monthly payment of {amount}",
+  "confirmAction": "Confirm Action",
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "invalidEmail": "Invalid email address",
+  "userNotFound": "No account is registered with this email",
+  "wrongPassword": "Incorrect password",
+  "invalidCredential": "Incorrect email or password",
+  "emailInUse": "This email is already registered. Please sign in.",
+  "weakPassword": "Password must be at least 6 characters",
+  "networkFailed": "Network connection failed. Please check your connection.",
+  "loginCancelled": "Sign-in was cancelled",
+  "tooMany": "Too many attempts. Please try again later.",
+  "missingEmail": "Please enter your email",
+  "userDisabled": "This account has been disabled",
+  "loginFailed": "Sign-in failed. Please try again.",
+  "enterEmailReset": "Enter your email first, then tap Forgot Password?",
+  "resetSent": "Password reset email sent to {email}. Please check your inbox.",
+  "enterEmailPass": "Please enter your email and password",
+  "noGoogleToken": "Google sign-in token was not received",
+  "logoutConfirm": "Are you sure you want to sign out?",
+  "logoutTitle": "Sign Out",
+  "cloudFail": "Cloud sync failed {hint}. Check Firestore settings or your network.",
+  "saveFail": "Save failed {hint}. Check Firestore settings or your network.",
+  "deleted": "Payment record deleted",
+  "editPayment": "Edit Payment",
+  "saveChanges": "Save Changes",
+  "enterPlate": "Please enter the plate number",
+  "invalidTotal": "Please enter a valid total loan amount",
+  "settingsSaved": "Settings saved",
+  "noSavedPlate": "There is no saved vehicle information",
+  "clearConfirm": "Clear the plate number and total loan amount? Payment records will not be deleted.",
+  "clearPlateTitle": "Clear Vehicle Info",
+  "plateCleared": "Vehicle information cleared",
+  "invalidPayment": "Please enter a valid payment amount",
+  "futureDate": "The date cannot be in the future",
+  "paymentUpdated": "Payment record updated",
+  "paymentAdded": "Payment record added",
+  "switchLight": "Switch to light mode",
+  "switchDark": "Switch to dark mode",
+  "settings": "Settings",
+  "secAccount": "Account",
+  "signedInAs": "Signed in as",
+  "signInMethod": "Sign-in method",
+  "methodEmail": "Email & password",
+  "changePassword": "Change password",
+  "currentPassword": "Current password",
+  "newPassword": "New password (min 6 characters)",
+  "confirmPassword": "Confirm new password",
+  "savePassword": "Update password",
+  "pwFillAll": "Please fill in all password fields.",
+  "pwShort": "The new password needs at least 6 characters.",
+  "pwMismatch": "The new passwords do not match.",
+  "pwSame": "The new password must be different from the current one.",
+  "pwUpdated": "Password updated.",
+  "pwWrong": "The current password is incorrect.",
+  "pwTooMany": "Too many attempts. Please try again later.",
+  "pwFailed": "Could not update the password. Please try again.",
+  "secPrefs": "Preferences",
+  "language": "Language",
+  "theme": "Theme",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "currency": "Currency",
+  "currencyNote": "Only changes the symbol shown. Amounts are not converted.",
+  "monthlyReminder": "Monthly payment reminder",
+  "reminderDay": "Reminder day of month",
+  "reminderTime": "Reminder time",
+  "reminderChannel": "Monthly payment reminder",
+  "reminderBody": "Time to record this month's vehicle loan payment.",
+  "reminderDenied": "Notifications are turned off. Please allow notifications for Car Loan Manager in your phone settings.",
+  "reminderError": "Could not set up the reminder. Please try again.",
+  "secData": "Your data",
+  "exportCsv": "Export data (CSV)",
+  "exportEmpty": "There is no data to export yet.",
+  "exportUnavailable": "File export is not available on this device.",
+  "exportFailed": "Export failed: ",
+  "clearPayments": "Clear all payment records",
+  "nothingToClear": "There are no payment records to clear.",
+  "clearPayConfirm1": "Clear ALL payment records for every vehicle? Your vehicles will be kept.",
+  "clearPayConfirm2": "Final confirmation: this cannot be undone. Clear all payment records?",
+  "clearPayDone": "All payment records cleared.",
+  "secSupport": "Support",
+  "sendFeedback": "Send feedback",
+  "rateApp": "Rate Car Loan Manager",
+  "secAbout": "About & legal",
+  "aboutText": "A simple tool to track your car and motorcycle loan repayments.",
+  "version": "Version",
+  "developer": "Developer",
+  "contact": "Contact",
+  "privacyPolicy": "Privacy Policy",
+  "terms": "Terms of Service",
+  "deleteAccount": "Delete Account",
+  "deleteNote": "Deleting your account permanently removes your Car Loan Manager account, vehicles and payment records.",
+  "deletingAccount": "Deleting account...",
+  "deleteSuccess": "Account deleted successfully.",
+  "deleteFailed": "Deletion failed: ",
+  "deleteConfirm1": "Permanently delete your Car Loan Manager account? This removes all vehicles and payment records and cannot be undone.",
+  "deleteConfirm2": "Final confirmation: permanently delete the account and all saved data?",
+  "enterPasswordDelete": "Enter your password to confirm account deletion:",
+  "passwordRequired": "Password is required.",
+  "reauthUnknown": "Could not determine how to re-authenticate this account.",
+  "vehicleType": "Vehicle type",
+  "typeCar": "Car",
+  "typeMoto": "Motorcycle",
+  "totalLoanCur": "Total Loan ({cur})",
+  "paymentAmountCur": "Payment Amount ({cur})",
+  "addVehicle": "Add vehicle",
+  "addVehicleTitle": "Add Vehicle",
+  "vehicleAdded": "Vehicle added",
+  "deleteVehicle": "Delete this vehicle",
+  "deleteVehicleConfirm": "Delete vehicle {plate} and all of its payment records? This cannot be undone.",
+  "vehicleDeleted": "Vehicle deleted",
+  "allVehiclesTotal": "Total remaining across all {n} vehicles: {amount}",
+  "settingsSub": "Manage your account, preferences, data and privacy.",
+  "accountSub": "Manage sign-in details and account security.",
+  "prefsSub": "Language, theme, currency and reminders.",
+  "dataSub": "Export or clear your data.",
+  "supportSub": "Get in touch or rate the app.",
+  "aboutSub": "App information and legal documents.",
+  "accountDetails": "Account details",
+  "dangerZone": "Danger zone",
+  "aboutCard": "About",
+  "legalCard": "Legal"
+ }
 };
 function tr(key, vars={}){
   let text = (I18N[currentLanguage] && I18N[currentLanguage][key]) || I18N.cn[key] || key;
+  text = text.replaceAll("{cur}", getCurrencySymbol());
   Object.entries(vars).forEach(([k,v]) => { text = text.replaceAll(`{${k}}`, v); });
   return text;
+}
+
+// ================== Currency (display symbol only) ==================
+const CURRENCIES = [
+  {code:'MYR', symbol:'RM'}, {code:'SGD', symbol:'S$'}, {code:'USD', symbol:'$'},
+  {code:'CNY', symbol:'¥'},  {code:'HKD', symbol:'HK$'}, {code:'IDR', symbol:'Rp'},
+  {code:'THB', symbol:'฿'},  {code:'EUR', symbol:'€'},   {code:'GBP', symbol:'£'},
+  {code:'AUD', symbol:'A$'}
+];
+function getCurrencyCode(){
+  let c = 'MYR';
+  try{ c = localStorage.getItem(CURRENCY_KEY) || 'MYR'; }catch(_e){}
+  return CURRENCIES.some(x=>x.code===c) ? c : 'MYR';
+}
+function getCurrencySymbol(){
+  const code = getCurrencyCode();
+  return CURRENCIES.find(x=>x.code===code).symbol;
+}
+function fmt(n){
+  return getCurrencySymbol() + " " + Number(n||0).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+
+function todayStr(){
+  const d = new Date();   // local date (not UTC)
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return d.getFullYear() + "-" + m + "-" + day;
+}
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str == null ? "" : String(str);
+  return d.innerHTML;
+}
+
+// ================== Data model ==================
+// Cloud document users/{uid}. For compatibility with the older single-vehicle versions:
+//   plate / totalLoan / payments  = the FIRST vehicle (unchanged field names)
+//   vehicleType                   = type of the first vehicle ("car" | "motorcycle")
+//   extraVehicles[]               = any additional vehicles {id,type,plate,totalLoan,payments[]}
+const defaultState = () => ({ plate:"", totalLoan:0, payments:[], vehicleType:"car", extraVehicles:[], theme:null });
+function normalizeState(data){
+  const s = Object.assign(defaultState(), data || {});
+  if(!Array.isArray(s.payments)) s.payments = [];
+  if(!Array.isArray(s.extraVehicles)) s.extraVehicles = [];
+  s.vehicleType = s.vehicleType === "motorcycle" ? "motorcycle" : "car";
+  s.extraVehicles.forEach(v => {
+    if(!v.id) v.id = newId();
+    if(!Array.isArray(v.payments)) v.payments = [];
+    v.type = v.type === "motorcycle" ? "motorcycle" : "car";
+    v.plate = v.plate || "";
+    v.totalLoan = Number(v.totalLoan || 0);
+  });
+  return s;
+}
+let state = normalizeState({ theme: localStorage.getItem(THEME_KEY) || null });
+let currentVehicleId = localStorage.getItem(VEHICLE_KEY) || "primary";
+let addingVehicle = false;
+let formType = "car";
+let editingPaymentId = null;
+
+function primaryVisible(){
+  return !!(state.plate || state.payments.length || Number(state.totalLoan) || !state.extraVehicles.length);
+}
+function primaryObj(){
+  return { id:"primary", primary:true, type:state.vehicleType, plate:state.plate || "", totalLoan:Number(state.totalLoan||0), payments:state.payments };
+}
+function allVehicles(){
+  const list = [];
+  if(primaryVisible()) list.push(primaryObj());
+  state.extraVehicles.forEach(v => list.push(v));
+  return list;
+}
+function canAddVehicle(){ return !(primaryVisible() && !state.plate); }
+function currentVehicle(){
+  const list = allVehicles();
+  let v = list.find(x => x.id === currentVehicleId);
+  if(!v){ v = list[0] || primaryObj(); currentVehicleId = v.id; }
+  return v;
+}
+function writeVehicle(v, fields){
+  if(v.primary){
+    if("type" in fields) state.vehicleType = fields.type;
+    if("plate" in fields) state.plate = fields.plate;
+    if("totalLoan" in fields) state.totalLoan = fields.totalLoan;
+  }else{
+    Object.assign(v, fields);
+  }
+}
+function setPayments(v, arr){
+  if(v.primary) state.payments = arr; else v.payments = arr;
+}
+function typeIcon(t){ return t === "motorcycle" ? "🏍️" : "🚗"; }
+function typeName(t){ return tr(t === "motorcycle" ? "typeMoto" : "typeCar"); }
+function paidOf(v){ return (v.payments || []).reduce((s,p)=> s + Number(p.amount||0), 0); }
+
+// ================== Theme / language application ==================
+function systemTheme(){
+  return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "dark" : "light";
+}
+function applyTheme(theme){
+  const resolved = theme === "dark" ? "dark" : "light";
+  document.body.classList.toggle("dark", resolved === "dark");
+  localStorage.setItem(THEME_KEY, resolved);
+  const title = resolved === "dark" ? tr("switchLight") : tr("switchDark");
+  $("themeToggleBtn").title = title;
+  $("authThemeToggleBtn").title = title;
+  syncSettingsUI();
 }
 function applyLanguage(lang){
   currentLanguage = lang === "en" ? "en" : "cn";
@@ -1294,51 +2099,69 @@ function applyLanguage(lang){
   document.title = tr("appTitle");
   document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = tr(el.dataset.i18n); });
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => { el.placeholder = tr(el.dataset.i18nPlaceholder); });
+  document.querySelectorAll("[data-i18n-ph]").forEach(el => { el.placeholder = tr(el.dataset.i18nPh); });
   const nextLabel = currentLanguage === "cn" ? "EN" : "CN";
   $("authLanguageBtn").textContent = nextLabel;
   $("mainLanguageBtn").textContent = nextLabel;
   const visible = $("authPassword").type === "text";
   $("passwordEyeBtn").setAttribute("aria-label", tr(visible ? "hidePassword" : "showPassword"));
   $("passwordEyeBtn").title = tr(visible ? "hidePassword" : "showPassword");
+  $("settingsBtn").title = tr("settings");
   applyTheme(state.theme || "light");
-  if(auth.currentUser) $("accountEmailText").textContent = auth.currentUser.email ? `${tr("loggedIn")}: ${auth.currentUser.email}` : tr("loggedIn");
   render();
+  syncSettingsUI();
+  if(localStorage.getItem(REMINDER_ON_KEY) === "1") applyReminder().catch(()=>{});
 }
 
-function fmt(n){
-  return "RM " + Number(n||0).toLocaleString('en-MY', {minimumFractionDigits:2, maximumFractionDigits:2});
+// ================== Toast / confirm / prompt ==================
+function showToast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(()=> t.classList.remove("show"), 2200);
+}
+// showConfirm(message, title)            -> true / false
+// showConfirm(message, title, {input:1}) -> typed text, or null if cancelled
+function showConfirm(message, title, opts){
+  opts = opts || {};
+  return new Promise((resolve) => {
+    const input = $("confirmInput"), okBtn = $("confirmOkBtn"), cancelBtn = $("confirmCancelBtn");
+    $("confirmTitle").textContent = title || tr("confirmAction");
+    $("confirmMessage").textContent = message;
+    input.classList.toggle("hidden", !opts.input);
+    input.value = "";
+    $("confirmOverlay").classList.add("show");
+    if(opts.input) setTimeout(()=> input.focus(), 60);
+    function done(result){
+      $("confirmOverlay").classList.remove("show");
+      okBtn.removeEventListener("click", onOk);
+      cancelBtn.removeEventListener("click", onCancel);
+      input.removeEventListener("keydown", onKey);
+      resolve(result);
+    }
+    function onOk(){ done(opts.input ? input.value : true); }
+    function onCancel(){ done(opts.input ? null : false); }
+    function onKey(e){ if(e.key === "Enter") onOk(); }
+    okBtn.addEventListener("click", onOk);
+    cancelBtn.addEventListener("click", onCancel);
+    input.addEventListener("keydown", onKey);
+  });
 }
 
-function todayStr(){
-  const d = new Date();
-  return d.toISOString().slice(0,10);
-}
-
-function applyTheme(theme){
-  const resolvedTheme = theme === "dark" ? "dark" : "light";
-  document.body.classList.toggle("dark", resolvedTheme === "dark");
-  localStorage.setItem(THEME_KEY, resolvedTheme);
-  const title = resolvedTheme === "dark" ? (currentLanguage === "en" ? "Switch to light mode" : "切换到亮色模式") : (currentLanguage === "en" ? "Switch to dark mode" : "切换到暗色模式");
-  $("themeToggleBtn").title = title;
-  $("authThemeToggleBtn").title = title;
-}
-
+// ================== Firestore ==================
 let unsubscribeSnapshot = null;
-
 function startFirestoreSync(uid){
   if(unsubscribeSnapshot) unsubscribeSnapshot();
   const docRef = db.collection("users").doc(uid);
   unsubscribeSnapshot = docRef.onSnapshot((snap) => {
     if(snap.exists){
-      state = Object.assign({plate:"", totalLoan:0, payments:[], theme:null}, snap.data());
-    } else {
-      state = { plate:"", totalLoan:0, payments:[], theme: state.theme || null };
+      state = normalizeState(snap.data());
+    }else{
+      state = normalizeState({ theme: state.theme });
       docRef.set(state);
     }
-    if(!state.theme){
-      state.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)
-        ? "dark" : "light";
-    }
+    if(!state.theme) state.theme = systemTheme();
     applyTheme(state.theme);
     render();
   }, (err) => {
@@ -1347,22 +2170,9 @@ function startFirestoreSync(uid){
     showToast(tr("cloudFail", {hint}));
   });
 }
-
 function stopFirestoreSync(){
   if(unsubscribeSnapshot){ unsubscribeSnapshot(); unsubscribeSnapshot = null; }
 }
-
-$("authThemeToggleBtn").addEventListener("click", () => {
-  state.theme = state.theme === "dark" ? "light" : "dark";
-  applyTheme(state.theme);
-});
-
-$("themeToggleBtn").addEventListener("click", async () => {
-  state.theme = state.theme === "dark" ? "light" : "dark";
-  applyTheme(state.theme);
-  await saveState();
-});
-
 async function saveState(){
   const user = auth.currentUser;
   if(!user) return;
@@ -1375,348 +2185,208 @@ async function saveState(){
   }
 }
 
-// ================== 登录 / 注册 / Google 登录 ==================
-function showAuthError(msg){
-  $("authError").textContent = msg || "";
-}
-
-function translateAuthError(err){
-  const map = {
-    "auth/invalid-email": "invalidEmail", "auth/user-not-found": "userNotFound", "auth/wrong-password": "wrongPassword",
-    "auth/invalid-credential": "invalidCredential", "auth/email-already-in-use": "emailInUse", "auth/weak-password": "weakPassword",
-    "auth/network-request-failed": "networkFailed", "auth/popup-closed-by-user": "loginCancelled", "auth/too-many-requests": "tooMany",
-    "auth/missing-email": "missingEmail", "auth/user-disabled": "userDisabled"
-  };
-  return map[err.code] ? tr(map[err.code]) : (err.message || tr("loginFailed"));
-}
-
-// Keep Me Signed In: remember the email and password on this device when selected.
-// The password field remains visually masked by type="password" until the eye icon is pressed.
-const REMEMBER_EMAIL_KEY = "carLoanRememberedEmail";
-const REMEMBER_PASSWORD_KEY = "carLoanRememberedPassword";
-const rememberedEmail = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
-const rememberedPassword = localStorage.getItem(REMEMBER_PASSWORD_KEY) || "";
-if(rememberedEmail || rememberedPassword){
-  $("authEmail").value = rememberedEmail;
-  $("authPassword").value = rememberedPassword;
-  $("authPassword").type = "password";
-  $("keepSignedIn").checked = true;
-}
-
-// Unticking Keep Me Signed In immediately forgets and clears both fields.
-$("keepSignedIn").addEventListener("change", () => {
-  if(!$("keepSignedIn").checked){
-    localStorage.removeItem(REMEMBER_EMAIL_KEY);
-    localStorage.removeItem(REMEMBER_PASSWORD_KEY);
-    $("authEmail").value = "";
-    $("authPassword").value = "";
-    $("authPassword").type = "password";
-    $("eyeNormal").style.display = "block";
-    $("eyeSlash").style.display = "none";
-  }
-});
-
-// Use in-memory auth persistence so reopening the Android app shows the login screen.
-// The remembered email is restored separately when Keep Me Signed In is checked.
-auth.setPersistence(firebase.auth.Auth.Persistence.NONE).catch((e) => {
-  console.warn("Could not set Firebase auth persistence:", e);
-});
-
-$("authLanguageBtn").addEventListener("click", () => applyLanguage(currentLanguage === "cn" ? "en" : "cn"));
-$("mainLanguageBtn").addEventListener("click", () => applyLanguage(currentLanguage === "cn" ? "en" : "cn"));
-
-$("passwordEyeBtn").addEventListener("click", () => {
-  const showing = $("authPassword").type === "text";
-  $("authPassword").type = showing ? "password" : "text";
-  $("eyeNormal").style.display = showing ? "block" : "none";
-  $("eyeSlash").style.display = showing ? "none" : "block";
-  $("passwordEyeBtn").setAttribute("aria-label", tr(showing ? "showPassword" : "hidePassword"));
-  $("passwordEyeBtn").title = tr(showing ? "showPassword" : "hidePassword");
-});
-
-if(!state.theme){
-  state.theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? "dark" : "light";
-}
-applyTheme(state.theme);
-applyLanguage(currentLanguage);
-
-$("forgotPasswordLink").addEventListener("click", async (e) => {
-  e.preventDefault();
-  showAuthError("");
-  const email = $("authEmail").value.trim();
-  if(!email){
-    showAuthError(tr("enterEmailReset"));
-    $("authEmail").focus();
-    return;
-  }
-  try{
-    await auth.sendPasswordResetEmail(email);
-    showAuthError(tr("resetSent", {email}));
-  }catch(err){
-    showAuthError(translateAuthError(err));
-  }
-});
-
-$("emailLoginBtn").addEventListener("click", async () => {
-  showAuthError("");
-  const email = $("authEmail").value.trim();
-  const pass = $("authPassword").value;
-  if(!email || !pass){ showAuthError(tr("enterEmailPass")); return; }
-  try{
-    if($("keepSignedIn").checked){
-      localStorage.setItem(REMEMBER_EMAIL_KEY, email);
-      localStorage.setItem(REMEMBER_PASSWORD_KEY, pass);
-    }else{
-      localStorage.removeItem(REMEMBER_EMAIL_KEY);
-      localStorage.removeItem(REMEMBER_PASSWORD_KEY);
-    }
-    await auth.signInWithEmailAndPassword(email, pass);
-  }catch(e){
-    showAuthError(translateAuthError(e));
-  }
-});
-
-$("emailRegisterBtn").addEventListener("click", async () => {
-  showAuthError("");
-  const email = $("authEmail").value.trim();
-  const pass = $("authPassword").value;
-  if(!email || !pass){ showAuthError(tr("enterEmailPass")); return; }
-  try{
-    await auth.createUserWithEmailAndPassword(email, pass);
-  }catch(e){
-    showAuthError(translateAuthError(e));
-  }
-});
-
-$("googleSignInBtn").addEventListener("click", async () => {
-  showAuthError("");
-  try{
-    const provider = new firebase.auth.GoogleAuthProvider();
-    await auth.signInWithPopup(provider);
-  }catch(e){
-    // A cancelled Google sign-in is not an error. Return quietly to the login screen.
-    const code = String((e && e.code) || "").toLowerCase();
-    const message = String((e && e.message) || e || "").toLowerCase();
-    const cancelled =
-      code.includes("popup-closed-by-user") ||
-      code.includes("cancelled-popup-request") ||
-      code.includes("canceled") || code.includes("cancelled") ||
-      code === "12501" ||
-      message.includes("popup closed") ||
-      message.includes("closed by the user") ||
-      message.includes("user canceled") || message.includes("user cancelled") ||
-      message.includes("sign in canceled") || message.includes("sign-in canceled") ||
-      message.includes("sign in cancelled") || message.includes("sign-in cancelled") ||
-      message.includes("12501");
-    if(cancelled){
-      showAuthError("");
-      return;
-    }
-    console.error("Google 登录失败，完整错误：", e);
-    let detail = "";
-    try{ detail = JSON.stringify(e, Object.getOwnPropertyNames(e)); }catch(_){}
-    showAuthError(translateAuthError(e) + (detail ? ("\n\n完整信息：" + detail) : ""));
-  }
-});
-
-$("logoutBtn").addEventListener("click", async () => {
-  const ok = await showConfirm(tr("logoutConfirm"), tr("logoutTitle"));
-  if(!ok) return;
-  await auth.signOut();
-});
-
-$("accountToggle").addEventListener("click", () => {
-  $("accountToggle").classList.toggle("open");
-  $("accountBody").classList.toggle("open");
-});
-
-
-if($("facebookSignInBtn")){
-  $("facebookSignInBtn").addEventListener("click", async () => {
-    showAuthError("");
-    try{
-      const provider = new firebase.auth.FacebookAuthProvider();
-      provider.addScope("email");
-      await auth.signInWithPopup(provider);
-    }catch(e){
-      const code = String((e && e.code) ?? "").toLowerCase();
-      const msg = String((e && e.message) ?? "").toLowerCase();
-      if(code.includes("popup-closed-by-user") ||
-         code.includes("cancelled-popup-request") ||
-         code.includes("user-cancelled") ||
-         msg.includes("cancelled") ||
-         msg.includes("canceled")){
-        showAuthError("");
-        return;
-      }
-      showAuthError(translateAuthError(e));
-    }
-  });
-}
-
-auth.onAuthStateChanged((user) => {
-  if(user){
-    document.body.classList.add("authed");
-    $("accountEmailText").textContent = user.email ? `${tr("loggedIn")}: ${user.email}` : tr("loggedIn");
-    if(!$("keepSignedIn").checked){
-      $("authEmail").value = "";
-      $("authPassword").value = "";
-    }
-    showAuthError("");
-    startFirestoreSync(user.uid);
-  } else {
-    document.body.classList.remove("authed");
-    stopFirestoreSync();
-    if($("keepSignedIn").checked){
-      $("authEmail").value = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
-      $("authPassword").value = localStorage.getItem(REMEMBER_PASSWORD_KEY) || "";
-      $("authPassword").type = "password";
-      $("eyeNormal").style.display = "block";
-      $("eyeSlash").style.display = "none";
-    }else{
-      $("authEmail").value = "";
-      $("authPassword").value = "";
+// ================== Rendering ==================
+function renderVehicleBar(list, cur){
+  const bar = $("vehicleBar");
+  let html = "";
+  if(list.length > 1 || (list.length === 1 && canAddVehicle())){
+    html = list.map(v => `
+      <button type="button" class="v-chip${(!addingVehicle && v.id === cur.id) ? " active" : ""}" data-vid="${escapeHtml(v.id)}">
+        <span>${typeIcon(v.type)}</span><span class="v-plate">${escapeHtml(v.plate || tr("unsetPlate"))}</span>
+      </button>`).join("");
+    if(canAddVehicle()){
+      html += `<button type="button" class="v-chip add${addingVehicle ? " active" : ""}" id="addVehicleChip">+ ${escapeHtml(tr("addVehicle"))}</button>`;
     }
   }
-});
+  bar.innerHTML = html;
+  bar.style.display = html ? "flex" : "none";
+}
 
-function showToast(msg){
-  const t = $("toast");
-  t.textContent = msg;
-  t.classList.add("show");
-  clearTimeout(showToast._timer);
-  showToast._timer = setTimeout(()=> t.classList.remove("show"), 1800);
+function setTypeSeg(type){
+  formType = type === "motorcycle" ? "motorcycle" : "car";
+  document.querySelectorAll("#vehTypeSeg button").forEach(b => b.classList.toggle("active", b.dataset.type === formType));
 }
 
 function render(){
-  $("plateInput").value = state.plate || "";
-  $("totalInput").value = state.totalLoan || "";
-  $("plateChip").textContent = state.plate ? state.plate : tr("unsetPlate");
+  const list = allVehicles();
+  const v = currentVehicle();
+  try{ localStorage.setItem(VEHICLE_KEY, currentVehicleId); }catch(_e){}
 
-  const totalPaid = state.payments.reduce((s,p)=> s + Number(p.amount||0), 0);
-  const remaining = Math.max(Number(state.totalLoan||0) - totalPaid, 0);
-  const pct = state.totalLoan > 0 ? Math.min(totalPaid / state.totalLoan, 1) : 0;
+  renderVehicleBar(list, v);
+  $("vehCardTitle").textContent = addingVehicle ? tr("addVehicleTitle") : tr("vehicleLoanSettings");
+  if(!addingVehicle){
+    $("plateInput").value = v.plate || "";
+    $("totalInput").value = v.totalLoan || "";
+    setTypeSeg(v.type);
+  }
+  $("clearSettingsBtn").classList.toggle("hidden", addingVehicle || !v.primary);
+  $("deleteVehicleBtn").classList.toggle("hidden", addingVehicle || !!v.primary);
+  $("cancelAddVehicleBtn").classList.toggle("hidden", !addingVehicle);
+  $("plateChip").textContent = typeIcon(v.type) + " " + (v.plate ? v.plate : tr("unsetPlate"));
 
-  $("totalText").textContent = fmt(state.totalLoan);
+  const totalPaid = paidOf(v);
+  const total = Number(v.totalLoan || 0);
+  const remaining = Math.max(total - totalPaid, 0);
+  const pct = total > 0 ? Math.min(totalPaid / total, 1) : 0;
+
+  $("totalText").textContent = fmt(total);
   $("paidText").textContent = fmt(totalPaid);
   $("remainText").textContent = fmt(remaining);
-  $("countText").textContent = state.payments.length;
+  $("countText").textContent = v.payments.length;
   $("pctText").textContent = Math.round(pct*100) + "%";
+  $("ring").style.strokeDashoffset = 289 - (pct * 289);
 
-  const circumference = 289;
-  $("ring").style.strokeDashoffset = circumference - (pct * circumference);
+  if(list.length > 1){
+    const sum = list.reduce((s,x)=> s + Math.max(Number(x.totalLoan||0) - paidOf(x), 0), 0);
+    $("allNote").textContent = tr("allVehiclesTotal", {n:list.length, amount: fmt(sum)});
+  }else{
+    $("allNote").textContent = "";
+  }
 
-  updatePayoffEstimate(remaining, totalPaid);
+  updatePayoffEstimate(v, remaining, totalPaid);
 
-  const list = $("historyList");
-  if(state.payments.length === 0){
-    list.innerHTML = '<div class="empty-state" data-i18n="noPayments">还没有还款记录，添加第一笔吧。</div>';
+  const listEl = $("historyList");
+  if(v.payments.length === 0){
+    listEl.innerHTML = '<div class="empty-state">' + escapeHtml(tr("noPayments")) + '</div>';
     return;
   }
-  const sorted = [...state.payments].sort((a,b)=> (a.date < b.date ? 1 : -1));
-  list.innerHTML = sorted.map(p => `
-    <div class="history-item" data-id="${p.id}">
+  const sorted = [...v.payments].sort((a,b)=> (a.date < b.date ? 1 : -1));
+  listEl.innerHTML = sorted.map(p => `
+    <div class="history-item" data-id="${escapeHtml(p.id)}">
       <div class="dot"></div>
       <div class="info">
-        <div class="date">${p.date}</div>
+        <div class="date">${escapeHtml(p.date)}</div>
         ${p.note ? `<div class="note">${escapeHtml(p.note)}</div>` : ""}
       </div>
       <div class="amt">${fmt(p.amount)}</div>
-      <button class="btn-edit-text" onclick="editPayment('${p.id}')">${tr("edit")}</button>
-      <button class="btn-danger-text" onclick="deletePayment('${p.id}')">${tr("delete")}</button>
+      <button class="btn-edit-text" data-act="edit" data-id="${escapeHtml(p.id)}">${escapeHtml(tr("edit"))}</button>
+      <button class="btn-danger-text" data-act="del" data-id="${escapeHtml(p.id)}">${escapeHtml(tr("delete"))}</button>
     </div>
   `).join("");
 }
 
-// 根据实际还款记录，自动算出"按目前的还款速度"大约还要多久还清
-function updatePayoffEstimate(remaining, totalPaid){
+function updatePayoffEstimate(v, remaining, totalPaid){
   const el = $("payoffText");
+  el.title = "";
+  if(!v.totalLoan){ el.textContent = "--"; return; }
+  if(remaining <= 0){ el.textContent = tr("fullyPaid"); return; }
+  if(v.payments.length === 0){ el.textContent = tr("noPaymentYet"); return; }
 
-  if(!state.totalLoan){
-    el.textContent = "--";
-    return;
-  }
-  if(remaining <= 0){
-    el.textContent = tr("fullyPaid");
-    return;
-  }
-  if(state.payments.length === 0){
-    el.textContent = tr("noPaymentYet");
-    return;
-  }
-
-  // 计算从第一笔还款到今天，一共经过了几个月，取平均每月还款额
-  const dates = state.payments.map(p => new Date(p.date + "T00:00:00"));
+  const dates = v.payments.map(p => new Date(p.date + "T00:00:00"));
   const firstDate = new Date(Math.min(...dates));
   const today = new Date();
-  let monthsElapsed = (today.getFullYear() - firstDate.getFullYear()) * 12
-                      + (today.getMonth() - firstDate.getMonth()) + 1;
+  let monthsElapsed = (today.getFullYear() - firstDate.getFullYear()) * 12 + (today.getMonth() - firstDate.getMonth()) + 1;
   monthsElapsed = Math.max(monthsElapsed, 1);
-
   const avgMonthly = totalPaid / monthsElapsed;
-
-  if(avgMonthly <= 0){
-    el.textContent = tr("insufficientRate");
-    return;
-  }
+  if(avgMonthly <= 0){ el.textContent = tr("insufficientRate"); return; }
 
   const monthsLeft = Math.ceil(remaining / avgMonthly);
   const years = Math.floor(monthsLeft / 12);
   const remMonths = monthsLeft % 12;
-
-  let text = "";
-  if(years > 0 && remMonths > 0){
-    text = currentLanguage === "en" ? `${years} ${tr("year")}${years === 1 ? "" : "s"} ${remMonths} ${tr("month")}${remMonths === 1 ? "" : "s"}` : `${years} ${tr("year")} ${remMonths} ${tr("month")}`;
-  } else if(years > 0){
-    text = currentLanguage === "en" ? `${years} ${tr("year")}${years === 1 ? "" : "s"}` : `${years} ${tr("year")}`;
-  } else {
-    text = currentLanguage === "en" ? `${remMonths} ${tr("month")}${remMonths === 1 ? "" : "s"}` : `${remMonths} ${tr("month")}`;
-  }
-
-  el.textContent = text;
+  const en = currentLanguage === "en";
+  const yTxt = en ? `${years} ${tr("year")}${years === 1 ? "" : "s"}` : `${years} ${tr("year")}`;
+  const mTxt = en ? `${remMonths} ${tr("month")}${remMonths === 1 ? "" : "s"}` : `${remMonths} ${tr("month")}`;
+  el.textContent = (years > 0 && remMonths > 0) ? `${yTxt} ${mTxt}` : (years > 0 ? yTxt : mTxt);
   el.title = tr("avgMonthlyTitle", {amount: fmt(avgMonthly)});
 }
 
-function escapeHtml(str){
-  const d = document.createElement('div');
-  d.textContent = str;
-  return d.innerHTML;
-}
+// ================== Vehicles ==================
+$("vehicleBar").addEventListener("click", (e) => {
+  const chip = e.target.closest(".v-chip");
+  if(!chip) return;
+  if(chip.id === "addVehicleChip"){
+    addingVehicle = true;
+    setTypeSeg("car");
+    $("plateInput").value = "";
+    $("totalInput").value = "";
+    $("settingsToggle").classList.add("open");
+    $("settingsBody").classList.add("open");
+    render();
+    $("plateInput").focus();
+    return;
+  }
+  addingVehicle = false;
+  currentVehicleId = chip.dataset.vid;
+  if(editingPaymentId) exitEditMode();
+  render();
+});
+document.querySelectorAll("#vehTypeSeg button").forEach(b => b.addEventListener("click", () => setTypeSeg(b.dataset.type)));
 
-function showConfirm(message, title){
-  return new Promise((resolve) => {
-    $("confirmTitle").textContent = title || tr("confirmAction");
-    $("confirmMessage").textContent = message;
-    $("confirmOverlay").classList.add("show");
+$("settingsToggle").addEventListener("click", () => {
+  $("settingsToggle").classList.toggle("open");
+  $("settingsBody").classList.toggle("open");
+});
 
-    function cleanup(result){
-      $("confirmOverlay").classList.remove("show");
-      okBtn.removeEventListener("click", onOk);
-      cancelBtn.removeEventListener("click", onCancel);
-      resolve(result);
-    }
-    const okBtn = $("confirmOkBtn");
-    const cancelBtn = $("confirmCancelBtn");
-    function onOk(){ cleanup(true); }
-    function onCancel(){ cleanup(false); }
-    okBtn.addEventListener("click", onOk);
-    cancelBtn.addEventListener("click", onCancel);
-  });
-}
+$("saveSettingsBtn").addEventListener("click", async () => {
+  const plate = $("plateInput").value.trim();
+  const total = parseFloat($("totalInput").value);
+  if(!plate){ showToast(tr("enterPlate")); return; }
+  if(isNaN(total) || total < 0){ showToast(tr("invalidTotal")); return; }
+  if(addingVehicle){
+    const nv = { id:newId(), type:formType, plate, totalLoan:total, payments:[] };
+    state.extraVehicles.push(nv);
+    currentVehicleId = nv.id;
+    addingVehicle = false;
+    render();
+    await saveState();
+    showToast(tr("vehicleAdded"));
+    return;
+  }
+  writeVehicle(currentVehicle(), { type:formType, plate, totalLoan:total });
+  render();
+  await saveState();
+  showToast(tr("settingsSaved"));
+});
 
-let editingPaymentId = null;
+$("cancelAddVehicleBtn").addEventListener("click", () => {
+  addingVehicle = false;
+  render();
+});
+
+$("clearSettingsBtn").addEventListener("click", async () => {
+  const v = currentVehicle();
+  if(!v.primary) return;
+  if(!state.plate && !state.totalLoan){ showToast(tr("noSavedPlate")); return; }
+  const ok = await showConfirm(tr("clearConfirm"), tr("clearPlateTitle"));
+  if(!ok) return;
+  state.plate = "";
+  state.totalLoan = 0;
+  render();
+  await saveState();
+  showToast(tr("plateCleared"));
+});
+
+$("deleteVehicleBtn").addEventListener("click", async () => {
+  const v = currentVehicle();
+  if(v.primary) return;
+  const ok = await showConfirm(tr("deleteVehicleConfirm", {plate: v.plate || tr("unsetPlate")}), tr("deleteVehicle"));
+  if(!ok) return;
+  state.extraVehicles = state.extraVehicles.filter(x => x.id !== v.id);
+  currentVehicleId = "primary";
+  render();
+  await saveState();
+  showToast(tr("vehicleDeleted"));
+});
+
+// ================== Payments ==================
+$("historyList").addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-act]");
+  if(!btn) return;
+  if(btn.dataset.act === "edit") editPayment(btn.dataset.id);
+  if(btn.dataset.act === "del") deletePayment(btn.dataset.id);
+});
 
 async function deletePayment(id){
-  state.payments = state.payments.filter(p => p.id !== id);
+  const v = currentVehicle();
+  setPayments(v, v.payments.filter(p => p.id !== id));
   if(editingPaymentId === id) exitEditMode();
   render();
   await saveState();
   showToast(tr("deleted"));
 }
-window.deletePayment = deletePayment;
-
 function editPayment(id){
-  const p = state.payments.find(p => p.id === id);
+  const v = currentVehicle();
+  const p = v.payments.find(p => p.id === id);
   if(!p) return;
   editingPaymentId = id;
   $("payAmount").value = p.amount;
@@ -1727,8 +2397,6 @@ function editPayment(id){
   $("cancelEditBtn").style.display = "inline-block";
   $("payAmount").focus();
 }
-window.editPayment = editPayment;
-
 function exitEditMode(){
   editingPaymentId = null;
   $("payCardTitle").textContent = tr("recordPayment");
@@ -1738,77 +2406,24 @@ function exitEditMode(){
   $("payNote").value = "";
   $("payDate").value = todayStr();
 }
-
-$("cancelEditBtn").addEventListener("click", () => {
-  exitEditMode();
-});
-
-$("settingsToggle").addEventListener("click", () => {
-  $("settingsToggle").classList.toggle("open");
-  $("settingsBody").classList.toggle("open");
-});
-
-$("saveSettingsBtn").addEventListener("click", async () => {
-  const plate = $("plateInput").value.trim();
-  const total = parseFloat($("totalInput").value);
-  if(!plate){
-    showToast(tr("enterPlate"));
-    return;
-  }
-  if(isNaN(total) || total < 0){
-    showToast(tr("invalidTotal"));
-    return;
-  }
-  state.plate = plate;
-  state.totalLoan = total;
-  render();
-  await saveState();
-  showToast(tr("settingsSaved"));
-});
-
-$("clearSettingsBtn").addEventListener("click", async () => {
-  if(!state.plate && !state.totalLoan){
-    showToast(tr("noSavedPlate"));
-    return;
-  }
-  const ok = await showConfirm(tr("clearConfirm"), tr("clearPlateTitle"));
-  if(!ok) return;
-  state.plate = "";
-  state.totalLoan = 0;
-  render();
-  await saveState();
-  showToast(tr("plateCleared"));
-});
+$("cancelEditBtn").addEventListener("click", exitEditMode);
 
 $("addPayBtn").addEventListener("click", async () => {
   const amount = parseFloat($("payAmount").value);
   const date = $("payDate").value || todayStr();
   const note = $("payNote").value.trim();
-  if(isNaN(amount) || amount <= 0){
-    showToast(tr("invalidPayment"));
-    return;
-  }
-  if(date > todayStr()){
-    showToast(tr("futureDate"));
-    return;
-  }
-
+  if(isNaN(amount) || amount <= 0){ showToast(tr("invalidPayment")); return; }
+  if(date > todayStr()){ showToast(tr("futureDate")); return; }
+  const v = currentVehicle();
   if(editingPaymentId){
-    const p = state.payments.find(p => p.id === editingPaymentId);
-    if(p){
-      p.amount = amount;
-      p.date = date;
-      p.note = note;
-    }
+    const p = v.payments.find(p => p.id === editingPaymentId);
+    if(p){ p.amount = amount; p.date = date; p.note = note; }
     exitEditMode();
     render();
     await saveState();
     showToast(tr("paymentUpdated"));
-  } else {
-    state.payments.push({
-      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
-      amount, date, note
-    });
+  }else{
+    v.payments.push({ id:newId(), amount, date, note });
     $("payAmount").value = "";
     $("payNote").value = "";
     render();
@@ -1816,9 +2431,530 @@ $("addPayBtn").addEventListener("click", async () => {
     showToast(tr("paymentAdded"));
   }
 });
-
 $("payDate").max = todayStr();
 $("payDate").value = todayStr();
+
+// ================== Login / persistence ==================
+function showAuthError(msg){ $("authError").textContent = msg || ""; }
+function translateAuthError(err){
+  const map = {
+    "auth/invalid-email":"invalidEmail", "auth/user-not-found":"userNotFound", "auth/wrong-password":"wrongPassword",
+    "auth/invalid-credential":"invalidCredential", "auth/email-already-in-use":"emailInUse", "auth/weak-password":"weakPassword",
+    "auth/network-request-failed":"networkFailed", "auth/popup-closed-by-user":"loginCancelled", "auth/too-many-requests":"tooMany",
+    "auth/missing-email":"missingEmail", "auth/user-disabled":"userDisabled"
+  };
+  return map[err && err.code] ? tr(map[err.code]) : tr("loginFailed");
+}
+function isCancelled(e){
+  const code = String((e && e.code) ?? "").trim().toLowerCase();
+  const message = String((e && e.message) ?? e ?? "").trim().toLowerCase();
+  let raw = "";
+  try{ raw = JSON.stringify(e, Object.getOwnPropertyNames(e)).toLowerCase(); }catch(_e){}
+  const all = `${code} ${message} ${raw}`;
+  return code === "16" || code === "12501" || all.includes("[16]") ||
+    ["cancelled by user","canceled by user","popup-closed-by-user","cancelled-popup-request","canceled","cancelled",
+     "popup closed","closed by the user","user canceled","user cancelled"].some(s => all.includes(s));
+}
+
+// "Keep me signed in":
+//   ticked   -> Firebase keeps the sign-in on this device (LOCAL) and the email is remembered.
+//   unticked -> the sign-in lasts only while the app stays open (SESSION) and nothing is remembered.
+// The password is never stored by the app.
+async function applyPersistence(email){
+  const keep = $("keepSignedIn").checked;
+  if(keep){
+    if(email) localStorage.setItem(REMEMBER_EMAIL_KEY, email);
+  }else{
+    localStorage.removeItem(REMEMBER_EMAIL_KEY);
+  }
+  await auth.setPersistence(keep ? firebase.auth.Auth.Persistence.LOCAL : firebase.auth.Auth.Persistence.SESSION);
+}
+
+(function initRememberedEmail(){
+  const remembered = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
+  $("authEmail").value = remembered;
+  $("authPassword").value = "";
+  $("keepSignedIn").checked = !!remembered;
+})();
+$("keepSignedIn").addEventListener("change", () => {
+  if(!$("keepSignedIn").checked){
+    localStorage.removeItem(REMEMBER_EMAIL_KEY);
+    $("authEmail").value = "";
+    $("authPassword").value = "";
+    $("authPassword").type = "password";
+    $("eyeNormal").style.display = "block";
+    $("eyeSlash").style.display = "none";
+  }
+});
+
+$("authLanguageBtn").addEventListener("click", () => applyLanguage(currentLanguage === "cn" ? "en" : "cn"));
+$("mainLanguageBtn").addEventListener("click", () => applyLanguage(currentLanguage === "cn" ? "en" : "cn"));
+$("passwordEyeBtn").addEventListener("click", () => {
+  const showing = $("authPassword").type === "text";
+  $("authPassword").type = showing ? "password" : "text";
+  $("eyeNormal").style.display = showing ? "block" : "none";
+  $("eyeSlash").style.display = showing ? "none" : "block";
+  $("passwordEyeBtn").setAttribute("aria-label", tr(showing ? "showPassword" : "hidePassword"));
+  $("passwordEyeBtn").title = tr(showing ? "showPassword" : "hidePassword");
+});
+$("authThemeToggleBtn").addEventListener("click", () => {
+  state.theme = state.theme === "dark" ? "light" : "dark";
+  applyTheme(state.theme);
+});
+$("themeToggleBtn").addEventListener("click", async () => {
+  state.theme = state.theme === "dark" ? "light" : "dark";
+  applyTheme(state.theme);
+  await saveState();
+});
+
+$("forgotPasswordLink").addEventListener("click", async (e) => {
+  e.preventDefault();
+  showAuthError("");
+  const email = $("authEmail").value.trim();
+  if(!email){ showAuthError(tr("enterEmailReset")); $("authEmail").focus(); return; }
+  try{
+    await auth.sendPasswordResetEmail(email);
+    showAuthError(tr("resetSent", {email}));
+  }catch(err){ showAuthError(translateAuthError(err)); }
+});
+
+$("emailLoginBtn").addEventListener("click", async () => {
+  showAuthError("");
+  const email = $("authEmail").value.trim();
+  const pass = $("authPassword").value;
+  if(!email || !pass){ showAuthError(tr("enterEmailPass")); return; }
+  try{
+    await applyPersistence(email);
+    await auth.signInWithEmailAndPassword(email, pass);
+  }catch(e){ showAuthError(translateAuthError(e)); }
+});
+$("emailRegisterBtn").addEventListener("click", async () => {
+  showAuthError("");
+  const email = $("authEmail").value.trim();
+  const pass = $("authPassword").value;
+  if(!email || !pass){ showAuthError(tr("enterEmailPass")); return; }
+  try{
+    await applyPersistence(email);
+    await auth.createUserWithEmailAndPassword(email, pass);
+  }catch(e){ showAuthError(translateAuthError(e)); }
+});
+
+async function socialSignIn(provider){   // provider: "google" | "facebook"
+  showAuthError("");
+  try{
+    await applyPersistence();
+    if(isNative()){
+      const FA = capPlugin("FirebaseAuthentication");
+      if(!FA) throw new Error("Native sign-in plugin is not available.");
+      let credential;
+      if(provider === "google"){
+        const result = await FA.signInWithGoogle();
+        const idToken = result && result.credential && result.credential.idToken;
+        if(!idToken) throw new Error(tr("noGoogleToken"));
+        credential = firebase.auth.GoogleAuthProvider.credential(idToken);
+      }else{
+        const result = await FA.signInWithFacebook();
+        const accessToken = result && result.credential && result.credential.accessToken;
+        if(!accessToken) throw new Error("Facebook access token was not received.");
+        credential = firebase.auth.FacebookAuthProvider.credential(accessToken);
+      }
+      await auth.signInWithCredential(credential);
+    }else{
+      const p = provider === "google" ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
+      if(provider === "facebook") p.addScope("email");
+      await auth.signInWithPopup(p);
+    }
+  }catch(e){
+    if(isCancelled(e)){ showAuthError(""); return; }
+    console.error(provider + " sign-in failed:", e);
+    showAuthError(translateAuthError(e));
+  }
+}
+$("googleSignInBtn").addEventListener("click", () => socialSignIn("google"));
+$("facebookSignInBtn").addEventListener("click", () => socialSignIn("facebook"));
+
+$("logoutBtn").addEventListener("click", async () => {
+  const ok = await showConfirm(tr("logoutConfirm"), tr("logoutTitle"));
+  if(!ok) return;
+  try{
+    const FA = capPlugin("FirebaseAuthentication");
+    if(FA){ try{ await FA.signOut(); }catch(nativeErr){ console.warn("Native sign-out failed:", nativeErr); } }
+    await auth.signOut();
+  }catch(e){
+    console.error("Logout failed:", e);
+    try{ await auth.signOut(); }catch(_e){}
+  }
+});
+
+// ================== Settings sheet ==================
+const settingsOverlay = $("settingsOverlay");
+function setSettingsStatus(text, isErr){
+  const el = $("settingsStatus");
+  el.textContent = text || "";
+  el.classList.toggle("err", !!isErr);
+}
+function currentProviders(){
+  const u = auth.currentUser;
+  return u ? (u.providerData || []).map(p => p && p.providerId).filter(Boolean) : [];
+}
+function syncSettingsUI(){
+  if(!window.__settingsReady) return;
+  document.querySelectorAll("#langSeg button").forEach(b => b.classList.toggle("active", b.dataset.lang === currentLanguage));
+  document.querySelectorAll("#themeSeg button").forEach(b => b.classList.toggle("active", b.dataset.theme === (document.body.classList.contains("dark") ? "dark" : "light")));
+  const u = auth.currentUser, prov = currentProviders();
+  $("acctEmail").textContent = u ? (u.email || u.uid) : "—";
+  $("acctMethod").textContent = prov.includes("password") ? tr("methodEmail") : prov.includes("google.com") ? "Google" : prov.includes("facebook.com") ? "Facebook" : "—";
+  $("changePwBtn").classList.toggle("hidden", !prov.includes("password"));
+  $("currencySelect").value = getCurrencyCode();
+  $("aboutVersion").textContent = tr("version") + " " + APP_VERSION;
+  const dev = $("aboutDev");
+  dev.textContent = DEVELOPER_NAME ? (tr("developer") + ": " + DEVELOPER_NAME) : "";
+  dev.classList.toggle("hidden", !DEVELOPER_NAME);
+  const con = $("aboutContact");
+  con.textContent = SUPPORT_EMAIL ? (tr("contact") + ": " + SUPPORT_EMAIL) : "";
+  con.classList.toggle("hidden", !SUPPORT_EMAIL);
+  $("feedbackBtn").classList.toggle("hidden", !SUPPORT_EMAIL);
+  $("rateBtn").classList.toggle("hidden", !isNative());
+  // On Windows the Support tab would be empty until SUPPORT_EMAIL is filled in, so hide it then.
+  const supportEmpty = $("feedbackBtn").classList.contains("hidden") && $("rateBtn").classList.contains("hidden");
+  $("navSupport").classList.toggle("hidden", supportEmpty);
+  $("supportPanel").style.display = supportEmpty ? "none" : "";
+  const dayRowHost = $("reminderDay");
+  if(dayRowHost && !dayRowHost.options.length){
+    for(let d = 1; d <= 28; d++){ const o = document.createElement("option"); o.value = d; o.textContent = d; dayRowHost.appendChild(o); }
+    dayRowHost.value = localStorage.getItem(REMINDER_DAY_KEY) || "1";
+  }
+}
+function showTab(name){
+  let tab = name || "account";
+  const navBtn = document.querySelector('.nav-item[data-tab="' + tab + '"]');
+  if(!navBtn || navBtn.classList.contains("hidden")) tab = "account";
+  document.querySelectorAll(".nav-item").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
+  document.querySelectorAll(".settings-panel").forEach(p => p.classList.toggle("active", p.dataset.panel === tab));
+  const main = $("settingsMain");
+  if(main) main.scrollTop = 0;
+}
+function openSettings(tab){
+  setSettingsStatus("");
+  $("accountStatus").textContent = "";
+  resetPasswordForm();
+  syncSettingsUI();
+  showTab(typeof tab === "string" ? tab : "account");
+  settingsOverlay.classList.remove("hidden");
+  const sheet = settingsOverlay.querySelector(".settings-sheet");
+  if(sheet) sheet.scrollTop = 0;
+}
+function closeSettings(){ settingsOverlay.classList.add("hidden"); }
+$("settingsBtn").addEventListener("click", () => openSettings());
+$("settingsCloseBtn").addEventListener("click", closeSettings);
+$("settingsCloseBtn2").addEventListener("click", closeSettings);
+document.querySelectorAll(".nav-item").forEach(b => b.addEventListener("click", () => { setSettingsStatus(""); showTab(b.dataset.tab); }));
+settingsOverlay.addEventListener("click", e => { if(e.target === settingsOverlay) closeSettings(); });
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape" && !$("confirmOverlay").classList.contains("show")) closeSettings();
+});
+
+document.querySelectorAll("#langSeg button").forEach(b => b.addEventListener("click", () => applyLanguage(b.dataset.lang)));
+document.querySelectorAll("#themeSeg button").forEach(b => b.addEventListener("click", async () => {
+  state.theme = b.dataset.theme;
+  applyTheme(state.theme);
+  await saveState();
+}));
+(function buildCurrencySelect(){
+  const sel = $("currencySelect");
+  sel.innerHTML = CURRENCIES.map(c => `<option value="${c.code}">${c.symbol}  (${c.code})</option>`).join("");
+  sel.value = getCurrencyCode();
+  sel.addEventListener("change", () => {
+    try{ localStorage.setItem(CURRENCY_KEY, sel.value); }catch(_e){}
+    applyLanguage(currentLanguage);   // refreshes every label and amount
+  });
+})();
+
+// ---- Change password (email accounts) ----
+function resetPasswordForm(){
+  ["pwCurrent","pwNew","pwConfirm"].forEach(id => { $(id).value = ""; });
+  $("pwForm").classList.add("hidden");
+}
+$("changePwBtn").addEventListener("click", () => {
+  setSettingsStatus("");
+  const form = $("pwForm");
+  form.classList.toggle("hidden");
+  if(!form.classList.contains("hidden")) $("pwCurrent").focus();
+});
+$("pwCancelBtn").addEventListener("click", () => { resetPasswordForm(); setSettingsStatus(""); });
+$("pwSaveBtn").addEventListener("click", async () => {
+  const user = auth.currentUser;
+  if(!user || !user.email) return;
+  const cur = $("pwCurrent").value, nw = $("pwNew").value, cf = $("pwConfirm").value;
+  if(!cur || !nw || !cf){ setSettingsStatus(tr("pwFillAll"), true); return; }
+  if(nw.length < 6){ setSettingsStatus(tr("pwShort"), true); return; }
+  if(nw !== cf){ setSettingsStatus(tr("pwMismatch"), true); return; }
+  if(nw === cur){ setSettingsStatus(tr("pwSame"), true); return; }
+  try{
+    await user.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(user.email, cur));
+    await user.updatePassword(nw);
+    resetPasswordForm();
+    setSettingsStatus(tr("pwUpdated"));
+  }catch(err){
+    const code = err && err.code;
+    if(code === "auth/wrong-password" || code === "auth/invalid-credential" || code === "auth/invalid-login-credentials") setSettingsStatus(tr("pwWrong"), true);
+    else if(code === "auth/too-many-requests") setSettingsStatus(tr("pwTooMany"), true);
+    else if(code === "auth/weak-password") setSettingsStatus(tr("pwShort"), true);
+    else{ console.error("Password update failed", err); setSettingsStatus(tr("pwFailed"), true); }
+  }
+});
+
+// ---- Monthly payment reminder (Android app only; local notification, nothing is sent anywhere) ----
+async function applyReminder(){
+  const LN = capPlugin("LocalNotifications");
+  if(!LN) return;
+  try{ await LN.cancel({ notifications:[{ id: REMINDER_ID }] }); }catch(_e){}
+  if(localStorage.getItem(REMINDER_ON_KEY) !== "1") return;
+  const day = Math.min(28, Math.max(1, parseInt(localStorage.getItem(REMINDER_DAY_KEY) || "1", 10) || 1));
+  const parts = (localStorage.getItem(REMINDER_TIME_KEY) || "09:00").split(":");
+  const hour = Math.min(23, Math.max(0, parseInt(parts[0], 10) || 0));
+  const minute = Math.min(59, Math.max(0, parseInt(parts[1], 10) || 0));
+  try{
+    await LN.createChannel({ id:"carloan-monthly-reminder", name: tr("reminderChannel"), description:"Monthly loan payment reminder", importance:3 });
+  }catch(_e){}
+  await LN.schedule({ notifications:[{
+    id: REMINDER_ID,
+    title: tr("appTitle"),
+    body: tr("reminderBody"),
+    channelId: "carloan-monthly-reminder",
+    schedule: { on:{ day, hour, minute }, allowWhileIdle:true }
+  }]});
+}
+(function initReminderUI(){
+  if(!(isNative() && capPlugin("LocalNotifications"))) return;   // hidden on Windows / if plugin missing
+  const toggle = $("reminderToggle"), dayEl = $("reminderDay"), timeEl = $("reminderTime");
+  const rows = ["reminderRow","reminderDayRow","reminderTimeRow"].map($);
+  rows[0].classList.remove("hidden");
+  const on = localStorage.getItem(REMINDER_ON_KEY) === "1";
+  toggle.checked = on;
+  timeEl.value = localStorage.getItem(REMINDER_TIME_KEY) || "09:00";
+  const showDetails = (flag) => { rows[1].classList.toggle("hidden", !flag); rows[2].classList.toggle("hidden", !flag); };
+  showDetails(on);
+  toggle.addEventListener("change", async () => {
+    setSettingsStatus("");
+    const LN = capPlugin("LocalNotifications");
+    if(toggle.checked){
+      try{
+        let p = await LN.checkPermissions();
+        if(p.display !== "granted") p = await LN.requestPermissions();
+        if(p.display !== "granted"){ toggle.checked = false; setSettingsStatus(tr("reminderDenied"), true); return; }
+        localStorage.setItem(REMINDER_ON_KEY, "1");
+        await applyReminder();
+      }catch(err){
+        console.error("Reminder setup failed", err);
+        toggle.checked = false;
+        localStorage.removeItem(REMINDER_ON_KEY);
+        setSettingsStatus(tr("reminderError"), true);
+      }
+    }else{
+      localStorage.removeItem(REMINDER_ON_KEY);
+      try{ await applyReminder(); }catch(_e){}
+    }
+    showDetails(toggle.checked);
+  });
+  dayEl.addEventListener("change", () => {
+    localStorage.setItem(REMINDER_DAY_KEY, dayEl.value || "1");
+    applyReminder().catch(() => setSettingsStatus(tr("reminderError"), true));
+  });
+  timeEl.addEventListener("change", () => {
+    localStorage.setItem(REMINDER_TIME_KEY, timeEl.value || "09:00");
+    applyReminder().catch(() => setSettingsStatus(tr("reminderError"), true));
+  });
+  if(on) applyReminder().catch(()=>{});
+})();
+
+// ---- Export CSV (all vehicles) ----
+function csvText(v){
+  let s = String(v == null ? "" : v);
+  if(/^[=+\-@\t\r]/.test(s)) s = "'" + s;   // stops spreadsheet formula injection
+  return '"' + s.replace(/"/g, '""') + '"';
+}
+function buildCsv(){
+  const rows = ["Vehicle Type,Plate,Total Loan (" + getCurrencyCode() + "),Date,Payment (" + getCurrencyCode() + "),Note"];
+  allVehicles().forEach(v => {
+    const head = [csvText(v.type === "motorcycle" ? "Motorcycle" : "Car"), csvText(v.plate), (Number(v.totalLoan)||0).toFixed(2)];
+    const pays = [...v.payments].sort((a,b) => String(a.date).localeCompare(String(b.date)));
+    if(!pays.length) rows.push(head.concat(["", "", ""]).join(","));
+    pays.forEach(p => rows.push(head.concat([csvText(p.date), (Number(p.amount)||0).toFixed(2), csvText(p.note)]).join(",")));
+  });
+  return "\uFEFF" + rows.join("\r\n") + "\r\n";   // BOM so Excel shows Chinese text correctly
+}
+$("exportBtn").addEventListener("click", async () => {
+  const hasData = allVehicles().some(v => v.plate || v.totalLoan || v.payments.length);
+  if(!hasData){ setSettingsStatus(tr("exportEmpty"), true); return; }
+  setSettingsStatus("");
+  const csv = buildCsv();
+  const fname = "car-loan-export-" + todayStr() + ".csv";
+  try{
+    if(isNative()){
+      const FS = capPlugin("Filesystem"), SH = capPlugin("Share");
+      if(!FS || !SH){ setSettingsStatus(tr("exportUnavailable"), true); return; }
+      const res = await FS.writeFile({ path: fname, data: csv, directory:"CACHE", encoding:"utf8" });
+      await SH.share({ title: tr("appTitle"), dialogTitle: tr("exportCsv"), files:[res.uri] });
+    }else{
+      const blob = new Blob([csv], { type:"text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = fname;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    }
+  }catch(err){
+    if(err && /cancel/i.test(String(err.message || err))) return;
+    console.error("Export failed", err);
+    setSettingsStatus(tr("exportFailed") + (err && err.message ? err.message : ""), true);
+  }
+});
+
+// ---- Clear all payment records (keeps account and vehicles) ----
+$("clearPayBtn").addEventListener("click", async () => {
+  if(!auth.currentUser) return;
+  const total = state.payments.length + state.extraVehicles.reduce((s,v) => s + v.payments.length, 0);
+  if(!total){ setSettingsStatus(tr("nothingToClear"), true); return; }
+  if(!(await showConfirm(tr("clearPayConfirm1"), tr("clearPayments")))) return;
+  if(!(await showConfirm(tr("clearPayConfirm2"), tr("clearPayments")))) return;
+  state.payments = [];
+  state.extraVehicles.forEach(v => { v.payments = []; });
+  if(editingPaymentId) exitEditMode();
+  render();
+  await saveState();
+  setSettingsStatus(tr("clearPayDone"));
+});
+
+// ---- Support / legal ----
+$("feedbackBtn").addEventListener("click", () => {
+  if(!SUPPORT_EMAIL) return;
+  const body = "\n\n---\n" + tr("appTitle") + " v" + APP_VERSION + (isNative() ? " (Android)" : " (Desktop)");
+  window.location.href = "mailto:" + SUPPORT_EMAIL +
+    "?subject=" + encodeURIComponent(currentLanguage === "cn" ? "车贷管家反馈" : "Car Loan Manager feedback") +
+    "&body=" + encodeURIComponent(body);
+});
+$("rateBtn").addEventListener("click", () => {
+  window.location.href = "https://play.google.com/store/apps/details?id=" + PLAY_STORE_ID;
+});
+$("privacyPolicyBtn").addEventListener("click", () => { window.location.href = "privacy-policy.html?from=app&lang=" + encodeURIComponent(currentLanguage); });
+$("termsBtn").addEventListener("click", () => { window.location.href = "terms.html?from=app&lang=" + encodeURIComponent(currentLanguage); });
+
+// ---- Delete account ----
+async function freshCredential(providerName){
+  const user = auth.currentUser;
+  if(!user) throw new Error("No signed-in account.");
+  if(isNative()){
+    const FA = capPlugin("FirebaseAuthentication");
+    if(!FA) throw new Error("Native authentication is not available.");
+    if(providerName === "google"){
+      const r = await FA.signInWithGoogle({ skipNativeAuth:true, useCredentialManager:false });
+      const c = r && r.credential;
+      if(!c || (!c.idToken && !c.accessToken)) throw new Error("Google did not return a credential.");
+      return firebase.auth.GoogleAuthProvider.credential(c.idToken || null, c.accessToken || null);
+    }
+    const r = await FA.signInWithFacebook({ skipNativeAuth:true });
+    const c = r && r.credential;
+    if(!c || !c.accessToken) throw new Error("Facebook did not return a credential.");
+    return firebase.auth.FacebookAuthProvider.credential(c.accessToken);
+  }
+  const provider = providerName === "google" ? new firebase.auth.GoogleAuthProvider() : new firebase.auth.FacebookAuthProvider();
+  await user.reauthenticateWithPopup(provider);
+  return null;
+}
+async function reauthenticateForDeletion(user){
+  const providers = (user.providerData || []).map(p => p && p.providerId).filter(Boolean);
+  if(providers.includes("password")){
+    const password = await showConfirm(tr("enterPasswordDelete"), tr("deleteAccount"), {input:true});
+    if(password === null) throw new Error("cancelled");
+    if(!password) throw new Error(tr("passwordRequired"));
+    await user.reauthenticateWithCredential(firebase.auth.EmailAuthProvider.credential(user.email, password));
+    return;
+  }
+  for(const [pid, name] of [["google.com","google"],["facebook.com","facebook"]]){
+    if(providers.includes(pid)){
+      const cred = await freshCredential(name);
+      if(cred) await user.reauthenticateWithCredential(cred);
+      return;
+    }
+  }
+  throw new Error(tr("reauthUnknown"));
+}
+$("deleteAccountBtn").addEventListener("click", async () => {
+  const user = auth.currentUser;
+  const status = $("accountStatus");
+  if(!user) return;
+  if(!(await showConfirm(tr("deleteConfirm1"), tr("deleteAccount")))) return;
+  if(!(await showConfirm(tr("deleteConfirm2"), tr("deleteAccount")))) return;
+  try{
+    status.textContent = tr("deletingAccount");
+    await reauthenticateForDeletion(user);
+    await db.collection("users").doc(user.uid).delete();
+    await user.delete();
+    localStorage.removeItem(REMEMBER_EMAIL_KEY);
+    status.textContent = tr("deleteSuccess");
+    showToast(tr("deleteSuccess"));
+  }catch(err){
+    if(err && err.message === "cancelled"){ status.textContent = ""; return; }
+    if(isCancelled(err)){ status.textContent = ""; return; }
+    console.error("Account deletion failed", err);
+    status.textContent = tr("deleteFailed") + (err && err.message ? err.message : "");
+  }
+});
+
+window.__settingsReady = true;
+
+// ================== Auth state ==================
+function handleReturnToSettings(signedIn){
+  const p = new URLSearchParams(window.location.search);
+  if(p.get("settings") !== "about"){ document.documentElement.classList.remove("returning-settings"); return; }
+  if(signedIn){
+    const l = p.get("lang");
+    if(l === "en" || l === "cn") applyLanguage(l);
+    openSettings("about");
+    if(document.documentElement.classList.contains("is-native") || window.innerWidth < 720){
+      const sec = $("settingsAboutSection");
+      if(sec) sec.scrollIntoView({block:"start"});
+    }
+  }
+  document.documentElement.classList.remove("returning-settings");
+  try{ history.replaceState(null, "", window.location.pathname); }catch(_e){}
+}
+
+auth.onAuthStateChanged((user) => {
+  document.body.classList.remove("auth-pending");
+  if(user){
+    document.body.classList.add("authed");
+    $("authPassword").value = "";
+    showAuthError("");
+    startFirestoreSync(user.uid);
+    syncSettingsUI();
+    handleReturnToSettings(true);
+  }else{
+    document.body.classList.remove("authed");
+    stopFirestoreSync();
+    closeSettings();
+    state = normalizeState({ theme: state.theme });
+    currentVehicleId = "primary";
+    addingVehicle = false;
+    const remembered = localStorage.getItem(REMEMBER_EMAIL_KEY) || "";
+    $("authEmail").value = remembered;
+    $("authPassword").value = "";
+    $("authPassword").type = "password";
+    $("eyeNormal").style.display = "block";
+    $("eyeSlash").style.display = "none";
+    $("keepSignedIn").checked = !!remembered;
+    handleReturnToSettings(false);
+  }
+});
+
+// ================== Start ==================
+if(!state.theme) state.theme = systemTheme();
+applyTheme(state.theme);
+applyLanguage(currentLanguage);
+
 </script>
 
 </body>
